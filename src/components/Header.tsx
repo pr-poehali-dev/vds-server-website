@@ -13,7 +13,7 @@ const Header = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Icon name="Server" size={32} className="text-primary" />
-              <span className="text-2xl font-bold text-foreground">VDS/VPS SERVERS</span>
+              <span className="text-2xl font-bold text-foreground">VDS SERVERS</span>
             </div>
             
             <nav className="hidden md:flex items-center space-x-2">
