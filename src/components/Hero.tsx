@@ -17,7 +17,7 @@ const Hero = () => {
         <img 
           src="/img/ff42460f-beba-4bf0-a424-3dc1cc9e7eca.jpg" 
           alt="VDS серверы и технологии"
-          className="mx-auto w-full rounded-2xl shadow-2xl animate-scale-in"
+          className="mx-auto max-w-3xl w-full rounded-2xl shadow-2xl animate-scale-in"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-blue-600/20 to-transparent rounded-2xl"></div>
       </div>
