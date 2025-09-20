@@ -13,7 +13,7 @@ const Hero = () => {
       </div>
       
       {/* Hero Image */}
-      <div className="mt-12 relative -mx-4 md:-mx-8 lg:-mx-16">
+      <div className="mt-12 relative w-screen -ml-[50vw] left-1/2">
         <img 
           src="/img/ad7d4503-d3c5-43be-aeef-03fef966fe39.jpg" 
           alt="Серверная комната дата-центра"
@@ -22,22 +22,24 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
         
         {/* Overlay Text */}
-        <div className="absolute inset-0 flex items-center justify-start pl-8 md:pl-16 lg:pl-24">
-          <div className="text-white max-w-lg">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-              Аренда VPS/VDS
-            </h2>
-            <p className="text-lg md:text-xl mb-4 text-white/90">
-              Виртуальные серверы в России
-            </p>
-            <div className="mb-6">
-              <span className="text-3xl md:text-4xl font-bold text-yellow-400">
-                от 200 руб/мес
-              </span>
+        <div className="absolute inset-0 flex items-center justify-start">
+          <div className="container mx-auto px-4">
+            <div className="text-white max-w-lg ml-8 md:ml-16 lg:ml-24">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+                Аренда VPS/VDS
+              </h2>
+              <p className="text-lg md:text-xl mb-4 text-white/90">
+                Виртуальные серверы в России
+              </p>
+              <div className="mb-6">
+                <span className="text-3xl md:text-4xl font-bold text-yellow-400">
+                  от 200 руб/мес
+                </span>
+              </div>
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200 shadow-lg">
+                Заказать сервер
+              </button>
             </div>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200 shadow-lg">
-              Заказать сервер
-            </button>
           </div>
         </div>
       </div>
