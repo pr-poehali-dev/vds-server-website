@@ -31,7 +31,7 @@ const Hero = () => {
               Виртуальные серверы в России
             </p>
             <div className="mb-6">
-              <span className="text-3xl md:text-4xl font-bold text-yellow-400">
+              <span className="text-3xl md:text-4xl font-bold text-white">
                 от 200 руб/мес
               </span>
             </div>
