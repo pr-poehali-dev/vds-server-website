@@ -25,7 +25,7 @@ const Hero = () => {
         <div className="absolute inset-0 flex items-center justify-start pl-8 md:pl-16 lg:pl-24">
           <div className="text-white max-w-lg">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-              Аренда VPS/VDS
+              Аренда VDS
             </h2>
             <p className="text-lg md:text-xl mb-4 text-white/90">
               Виртуальные серверы в России
