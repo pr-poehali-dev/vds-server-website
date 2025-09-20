@@ -9,7 +9,7 @@ interface AuthModalProps {
 }
 
 const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -19,8 +19,14 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Здесь будет логика авторизации
-    console.log('Auth data:', formData);
+    if (mode === 'forgot') {
+      // Логика восстановления пароля
+      console.log('Reset password for:', formData.email);
+      alert('Ссылка для восстановления пароля отправлена на ваш email!');
+    } else {
+      // Логика авторизации/регистрации
+      console.log('Auth data:', formData);
+    }
     onClose();
   };
 
@@ -46,7 +52,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         <CardHeader className="text-center">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl">
-              {isLogin ? 'Вход в систему' : 'Регистрация'}
+              {mode === 'login' ? 'Вход в систему' : mode === 'register' ? 'Регистрация' : 'Восстановление пароля'}
             </CardTitle>
             <Button
               variant="ghost"
@@ -58,16 +64,18 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             </Button>
           </div>
           <CardDescription>
-            {isLogin 
+            {mode === 'login' 
               ? 'Войдите в свой аккаунт для управления серверами' 
-              : 'Создайте аккаунт для заказа VDS серверов'
+              : mode === 'register' 
+                ? 'Создайте аккаунт для заказа VDS серверов'
+                : 'Введите email для получения ссылки восстановления'
             }
           </CardDescription>
         </CardHeader>
         
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
+            {mode === 'register' && (
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Имя
@@ -99,22 +107,24 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Пароль
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="Введите пароль"
-                required
-              />
-            </div>
+            {mode !== 'forgot' && (
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Пароль
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Введите пароль"
+                  required
+                />
+              </div>
+            )}
             
-            {!isLogin && (
+            {mode === 'register' && (
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Подтвердите пароль
@@ -135,22 +145,46 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               type="submit"
               className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
             >
-              <Icon name="LogIn" size={16} className="mr-2" />
-              {isLogin ? 'Войти' : 'Зарегистрироваться'}
+              <Icon name={mode === 'forgot' ? "Mail" : "LogIn"} size={16} className="mr-2" />
+              {mode === 'login' ? 'Войти' : mode === 'register' ? 'Зарегистрироваться' : 'Отправить ссылку'}
             </Button>
           </form>
           
+          {mode === 'login' && (
+            <div className="mt-4 text-center">
+              <Button
+                variant="link"
+                onClick={() => setMode('forgot')}
+                className="p-0 text-muted-foreground text-sm"
+              >
+                Забыли пароль?
+              </Button>
+            </div>
+          )}
+          
           <div className="mt-6 text-center">
-            <p className="text-muted-foreground">
-              {isLogin ? 'Нет аккаунта?' : 'Уже есть аккаунт?'}
-            </p>
-            <Button
-              variant="link"
-              onClick={() => setIsLogin(!isLogin)}
-              className="p-0 text-primary"
-            >
-              {isLogin ? 'Зарегистрироваться' : 'Войти'}
-            </Button>
+            {mode === 'forgot' ? (
+              <Button
+                variant="link"
+                onClick={() => setMode('login')}
+                className="p-0 text-primary"
+              >
+                ← Вернуться к входу
+              </Button>
+            ) : (
+              <>
+                <p className="text-muted-foreground">
+                  {mode === 'login' ? 'Нет аккаунта?' : 'Уже есть аккаунт?'}
+                </p>
+                <Button
+                  variant="link"
+                  onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+                  className="p-0 text-primary"
+                >
+                  {mode === 'login' ? 'Зарегистрироваться' : 'Войти'}
+                </Button>
+              </>
+            )}
           </div>
         </CardContent>
       </Card>
