@@ -1,11 +1,4 @@
-import { Button } from '@/components/ui/button';
-import Icon from '@/components/ui/icon';
-
-interface HeroProps {
-  setActiveTab: (tab: string) => void;
-}
-
-const Hero = ({ setActiveTab }: HeroProps) => {
+const Hero = () => {
   return (
     <section className="text-center py-16 animate-fade-in">
       <div className="max-w-4xl mx-auto">
@@ -17,7 +10,6 @@ const Hero = ({ setActiveTab }: HeroProps) => {
           Высокопроизводительные виртуальные серверы с гарантией uptime 99.9%. 
           Современные технологии и круглосуточная поддержка.
         </p>
-
       </div>
       
       {/* Hero Image */}
