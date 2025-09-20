@@ -4,6 +4,7 @@ import Hero from '@/components/Hero';
 import Features from '@/components/Features';
 import Plans from '@/components/Plans';
 import Dashboard from '@/components/Dashboard';
+import FAQ from '@/components/FAQ';
 
 import Footer from '@/components/Footer';
 
@@ -28,6 +29,7 @@ const Index = () => {
             <Hero setActiveTab={setActiveTab} />
             <Plans />
             <Features />
+            <FAQ />
           </div>
         )}
       </main>
