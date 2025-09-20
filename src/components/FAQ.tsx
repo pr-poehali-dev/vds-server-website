@@ -81,33 +81,6 @@ const FAQ = () => {
           </Card>
         ))}
       </div>
-      
-      {/* Support Contact */}
-      <div className="text-center mt-12">
-        <Card className="border-0 shadow-lg max-w-2xl mx-auto">
-          <CardContent className="p-8">
-            <Icon name="Headphones" size={48} className="text-primary mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-foreground mb-2">
-              Не нашли ответ на свой вопрос?
-            </h3>
-            <p className="text-muted-foreground mb-6">
-              Наша команда поддержки готова помочь вам 24/7
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
-              >
-                <Icon name="MessageCircle" size={16} className="mr-2" />
-                Онлайн-чат
-              </Button>
-              <Button variant="outline">
-                <Icon name="Mail" size={16} className="mr-2" />
-                support@vdsservers.ru
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
     </section>
   );
 };
