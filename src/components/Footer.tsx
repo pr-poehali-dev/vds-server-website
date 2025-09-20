@@ -36,18 +36,11 @@ const Footer = () => {
           
           <div>
             <h3 className="font-semibold mb-4">Контакты</h3>
-            <ul className="space-y-2 text-slate-400 mb-4">
+            <ul className="space-y-2 text-slate-400">
               <li>+7 (495) 123-45-67</li>
               <li>info@vdsservers.ru</li>
               <li>г. Москва, ул. Тверская, д. 1</li>
             </ul>
-            <Button 
-              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 w-full"
-              size="sm"
-            >
-              <Icon name="MessageCircle" size={16} className="mr-2" />
-              Онлайн-чат
-            </Button>
           </div>
         </div>
         
