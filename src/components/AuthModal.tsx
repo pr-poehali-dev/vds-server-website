@@ -29,6 +29,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     feedback: '',
     color: 'text-red-500'
   });
+  
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Валидация email
   const validateEmail = (email: string): string => {
@@ -243,17 +246,28 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Пароль
                 </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
-                    errors.password ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
-                  }`}
-                  placeholder="Введите пароль"
-                  required
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className={`w-full p-3 pr-12 border rounded-lg focus:outline-none focus:ring-2 ${
+                      errors.password ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
+                    }`}
+                    placeholder="Введите пароль"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-100"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    <Icon name={showPassword ? "EyeOff" : "Eye"} size={16} className="text-gray-500" />
+                  </Button>
+                </div>
                 {errors.password && (
                   <p className="text-red-500 text-sm mt-1 flex items-center">
                     <Icon name="AlertCircle" size={14} className="mr-1" />
@@ -290,17 +304,28 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Подтвердите пароль
                 </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
-                    errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
-                  }`}
-                  placeholder="Повторите пароль"
-                  required
-                />
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    className={`w-full p-3 pr-12 border rounded-lg focus:outline-none focus:ring-2 ${
+                      errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
+                    }`}
+                    placeholder="Повторите пароль"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-100"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    <Icon name={showConfirmPassword ? "EyeOff" : "Eye"} size={16} className="text-gray-500" />
+                  </Button>
+                </div>
                 {errors.confirmPassword && (
                   <p className="text-red-500 text-sm mt-1 flex items-center">
                     <Icon name="AlertCircle" size={14} className="mr-1" />
