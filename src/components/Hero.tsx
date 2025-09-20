@@ -30,14 +30,11 @@ const Hero = () => {
             <p className="text-lg md:text-xl mb-4 text-white/90">
               Виртуальные серверы в России
             </p>
-            <div className="mb-6">
+            <div>
               <span className="text-3xl md:text-4xl font-bold text-white">
                 от 200 руб/мес
               </span>
             </div>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200 shadow-lg">
-              Заказать сервер
-            </button>
           </div>
         </div>
       </div>
