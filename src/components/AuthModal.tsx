@@ -16,9 +16,108 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     confirmPassword: '',
     name: ''
   });
+  
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+    name: ''
+  });
+  
+  const [passwordStrength, setPasswordStrength] = useState({
+    score: 0,
+    feedback: '',
+    color: 'text-red-500'
+  });
+
+  // Валидация email
+  const validateEmail = (email: string): string => {
+    if (!email) return 'Email обязателен';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return 'Неверный формат email';
+    return '';
+  };
+  
+  // Валидация имени
+  const validateName = (name: string): string => {
+    if (!name.trim()) return 'Имя обязательно';
+    if (name.trim().length < 2) return 'Имя должно содержать минимум 2 символа';
+    return '';
+  };
+  
+  // Проверка силы пароля
+  const checkPasswordStrength = (password: string) => {
+    let score = 0;
+    let feedback = '';
+    let color = 'text-red-500';
+    
+    if (password.length >= 8) score += 1;
+    if (/[a-z]/.test(password)) score += 1;
+    if (/[A-Z]/.test(password)) score += 1;
+    if (/[0-9]/.test(password)) score += 1;
+    if (/[^A-Za-z0-9]/.test(password)) score += 1;
+    
+    switch (score) {
+      case 0:
+      case 1:
+        feedback = 'Слабый пароль';
+        color = 'text-red-500';
+        break;
+      case 2:
+      case 3:
+        feedback = 'Средний пароль';
+        color = 'text-yellow-500';
+        break;
+      case 4:
+        feedback = 'Хороший пароль';
+        color = 'text-blue-500';
+        break;
+      case 5:
+        feedback = 'Отличный пароль';
+        color = 'text-green-500';
+        break;
+    }
+    
+    setPasswordStrength({ score, feedback, color });
+  };
+  
+  // Валидация пароля
+  const validatePassword = (password: string): string => {
+    if (!password) return 'Пароль обязателен';
+    if (password.length < 8) return 'Пароль должен содержать минимум 8 символов';
+    if (!/[a-z]/.test(password)) return 'Пароль должен содержать строчные буквы';
+    if (!/[A-Z]/.test(password)) return 'Пароль должен содержать заглавные буквы';
+    if (!/[0-9]/.test(password)) return 'Пароль должен содержать цифры';
+    return '';
+  };
+  
+  // Валидация подтверждения пароля
+  const validateConfirmPassword = (confirmPassword: string, password: string): string => {
+    if (!confirmPassword) return 'Подтверждение пароля обязательно';
+    if (confirmPassword !== password) return 'Пароли не совпадают';
+    return '';
+  };
+  
+  // Валидация всей формы
+  const validateForm = (): boolean => {
+    const newErrors = {
+      email: validateEmail(formData.email),
+      password: mode !== 'forgot' ? validatePassword(formData.password) : '',
+      confirmPassword: mode === 'register' ? validateConfirmPassword(formData.confirmPassword, formData.password) : '',
+      name: mode === 'register' ? validateName(formData.name) : ''
+    };
+    
+    setErrors(newErrors);
+    return !Object.values(newErrors).some(error => error !== '');
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     if (mode === 'forgot') {
       // Логика восстановления пароля
       console.log('Reset password for:', formData.email);
@@ -26,15 +125,31 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     } else {
       // Логика авторизации/регистрации
       console.log('Auth data:', formData);
+      alert(`${mode === 'login' ? 'Вход' : 'Регистрация'} выполнен успешно!`);
     }
     onClose();
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
+    
+    // Очищаем ошибку при вводе
+    if (errors[name as keyof typeof errors]) {
+      setErrors({
+        ...errors,
+        [name]: ''
+      });
+    }
+    
+    // Проверяем силу пароля в реальном времени
+    if (name === 'password' && mode === 'register') {
+      checkPasswordStrength(value);
+    }
   };
 
   if (!isOpen) return null;
@@ -85,10 +200,18 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.name ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
+                  }`}
                   placeholder="Введите ваше имя"
                   required
                 />
+                {errors.name && (
+                  <p className="text-red-500 text-sm mt-1 flex items-center">
+                    <Icon name="AlertCircle" size={14} className="mr-1" />
+                    {errors.name}
+                  </p>
+                )}
               </div>
             )}
             
@@ -101,10 +224,18 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
+                  errors.email ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
+                }`}
                 placeholder="your@email.com"
                 required
               />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1 flex items-center">
+                  <Icon name="AlertCircle" size={14} className="mr-1" />
+                  {errors.email}
+                </p>
+              )}
             </div>
             
             {mode !== 'forgot' && (
@@ -117,10 +248,40 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.password ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
+                  }`}
                   placeholder="Введите пароль"
                   required
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1 flex items-center">
+                    <Icon name="AlertCircle" size={14} className="mr-1" />
+                    {errors.password}
+                  </p>
+                )}
+                {mode === 'register' && formData.password && (
+                  <div className="mt-2">
+                    <div className="flex items-center space-x-2">
+                      <div className="flex-1 bg-gray-200 rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full transition-all duration-300 ${
+                            passwordStrength.score <= 2 ? 'bg-red-500' : 
+                            passwordStrength.score === 3 ? 'bg-yellow-500' : 
+                            passwordStrength.score === 4 ? 'bg-blue-500' : 'bg-green-500'
+                          }`}
+                          style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
+                        />
+                      </div>
+                      <span className={`text-sm font-medium ${passwordStrength.color}`}>
+                        {passwordStrength.feedback}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Используйте: строчные и заглавные буквы, цифры, спецсимволы
+                    </p>
+                  </div>
+                )}
               </div>
             )}
             
@@ -134,10 +295,24 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
+                  }`}
                   placeholder="Повторите пароль"
                   required
                 />
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-sm mt-1 flex items-center">
+                    <Icon name="AlertCircle" size={14} className="mr-1" />
+                    {errors.confirmPassword}
+                  </p>
+                )}
+                {formData.confirmPassword && !errors.confirmPassword && formData.password === formData.confirmPassword && (
+                  <p className="text-green-500 text-sm mt-1 flex items-center">
+                    <Icon name="CheckCircle" size={14} className="mr-1" />
+                    Пароли совпадают
+                  </p>
+                )}
               </div>
             )}
             
