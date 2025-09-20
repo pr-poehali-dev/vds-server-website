@@ -15,7 +15,7 @@ const Hero = () => {
       {/* Hero Image */}
       <div className="mt-12 relative">
         <img 
-          src="/img/037bef13-5a98-4b7c-9f29-fd3ffc533b19.jpg" 
+          src="/img/0292846b-4251-4f5e-8c75-8e3c5bdd6adb.jpg" 
           alt="Аренда VPS/VDS виртуальные серверы в России от 200 руб/мес"
           className="mx-auto w-full rounded-2xl shadow-2xl animate-scale-in"
         />
