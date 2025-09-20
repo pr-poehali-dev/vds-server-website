@@ -15,8 +15,8 @@ const Hero = () => {
       {/* Hero Image */}
       <div className="mt-12 relative -mx-4 md:-mx-8 lg:-mx-16">
         <img 
-          src="/img/f4ff2761-8a5c-4dde-a8d8-6709c79e5924.jpg" 
-          alt="VDS серверы и технологии"
+          src="/img/ad7d4503-d3c5-43be-aeef-03fef966fe39.jpg" 
+          alt="Серверная комната дата-центра"
           className="w-full h-64 md:h-80 lg:h-96 object-cover animate-scale-in"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
