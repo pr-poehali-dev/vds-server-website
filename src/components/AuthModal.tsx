@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
@@ -32,6 +32,86 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Загрузка сохранённых данных при открытии модалки
+  useEffect(() => {
+    if (isOpen) {
+      const savedData = localStorage.getItem('authFormData');
+      const savedRemember = localStorage.getItem('rememberMe');
+      
+      if (savedData && savedRemember === 'true') {
+        try {
+          const parsedData = JSON.parse(savedData);
+          setFormData(prev => ({
+            ...prev,
+            email: parsedData.email || '',
+            name: parsedData.name || ''
+            // Пароли НЕ загружаем из соображений безопасности
+          }));
+          setRememberMe(true);
+        } catch (error) {
+          console.log('Ошибка загрузки сохранённых данных:', error);
+        }
+      }
+    }
+  }, [isOpen]);
+
+  // Сохранение данных при изменении
+  useEffect(() => {
+    if (rememberMe && (formData.email || formData.name)) {
+      const dataToSave = {
+        email: formData.email,
+        name: formData.name
+        // Пароли НЕ сохраняем из соображений безопасности
+      };
+      localStorage.setItem('authFormData', JSON.stringify(dataToSave));
+      localStorage.setItem('rememberMe', 'true');
+    } else if (!rememberMe) {
+      localStorage.removeItem('authFormData');
+      localStorage.removeItem('rememberMe');
+    }
+  }, [formData.email, formData.name, rememberMe]);
+
+  // Функция очистки формы (кроме сохранённых данных)
+  const clearForm = () => {
+    setFormData(prev => ({
+      email: rememberMe ? prev.email : '',
+      name: rememberMe ? prev.name : '',
+      password: '',
+      confirmPassword: ''
+    }));
+    setErrors({
+      email: '',
+      password: '',
+      confirmPassword: '',
+      name: ''
+    });
+    setPasswordStrength({
+      score: 0,
+      feedback: '',
+      color: 'text-red-500'
+    });
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+  };
+
+  // Очистка при смене режима
+  const handleModeChange = (newMode: 'login' | 'register' | 'forgot') => {
+    setMode(newMode);
+    // Очищаем только пароли, email и имя сохраняем если включено "запомнить"
+    setFormData(prev => ({
+      ...prev,
+      password: '',
+      confirmPassword: ''
+    }));
+    setErrors({
+      email: '',
+      password: '',
+      confirmPassword: '',
+      name: ''
+    });
+  };
 
   // Валидация email
   const validateEmail = (email: string): string => {
@@ -207,6 +287,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     errors.name ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
                   }`}
                   placeholder="Введите ваше имя"
+                  autoComplete="given-name"
                   required
                 />
                 {errors.name && (
@@ -231,6 +312,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   errors.email ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
                 }`}
                 placeholder="your@email.com"
+                autoComplete="email"
                 required
               />
               {errors.email && (
@@ -256,6 +338,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                       errors.password ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
                     }`}
                     placeholder="Введите пароль"
+                    autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                     required
                   />
                   <Button
@@ -314,6 +397,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                       errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
                     }`}
                     placeholder="Повторите пароль"
+                    autoComplete="new-password"
                     required
                   />
                   <Button
@@ -341,6 +425,22 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               </div>
             )}
             
+            {/* Чекбокс "Запомнить меня" для входа и регистрации */}
+            {mode !== 'forgot' && (
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2"
+                />
+                <label htmlFor="rememberMe" className="text-sm text-foreground select-none cursor-pointer">
+                  Запомнить меня (email и имя)
+                </label>
+              </div>
+            )}
+            
             <Button 
               type="submit"
               className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
@@ -354,7 +454,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             <div className="mt-4 text-center">
               <Button
                 variant="link"
-                onClick={() => setMode('forgot')}
+                onClick={() => handleModeChange('forgot')}
                 className="p-0 text-muted-foreground text-sm"
               >
                 Забыли пароль?
@@ -366,7 +466,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             {mode === 'forgot' ? (
               <Button
                 variant="link"
-                onClick={() => setMode('login')}
+                onClick={() => handleModeChange('login')}
                 className="p-0 text-primary"
               >
                 ← Вернуться к входу
@@ -378,7 +478,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 </p>
                 <Button
                   variant="link"
-                  onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+                  onClick={() => handleModeChange(mode === 'login' ? 'register' : 'login')}
                   className="p-0 text-primary"
                 >
                   {mode === 'login' ? 'Зарегистрироваться' : 'Войти'}
