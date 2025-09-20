@@ -27,8 +27,11 @@ const Hero = () => {
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
               Аренда VPS/VDS
             </h2>
+            <p className="text-lg md:text-xl mb-2 text-white/90">
+              Виртуальные серверы в России
+            </p>
             <p className="text-lg md:text-xl text-white/90">
-              Виртуальные серверы в России от 200 руб/мес
+              от 200 руб/мес
             </p>
           </div>
         </div>
