@@ -22,11 +22,19 @@ const Plans = () => {
       popular: true
     },
     {
+      name: 'Business',
+      price: '1699₽',
+      period: '/мес',
+      description: 'Для растущего бизнеса',
+      features: ['4 vCPU', '8 GB RAM', '120 GB SSD', '500 Мбит/с', '24/7 поддержка', 'Бесплатные бэкапы', 'SSL сертификат'],
+      popular: false
+    },
+    {
       name: 'Enterprise',
       price: '2499₽',
       period: '/мес',
       description: 'Для крупных проектов',
-      features: ['4 vCPU', '8 GB RAM', '160 GB SSD', '1 Гбит/с', '24/7 поддержка', 'Бесплатные бэкапы', 'Dedicated IP'],
+      features: ['8 vCPU', '16 GB RAM', '240 GB SSD', '1 Гбит/с', '24/7 поддержка', 'Бесплатные бэкапы', 'Dedicated IP', 'Managed сервис'],
       popular: false
     }
   ];
@@ -40,7 +48,7 @@ const Plans = () => {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
         {plans.map((plan, index) => (
           <Card 
             key={plan.name} 
