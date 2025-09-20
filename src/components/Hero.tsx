@@ -17,20 +17,7 @@ const Hero = ({ setActiveTab }: HeroProps) => {
           Высокопроизводительные виртуальные серверы с гарантией uptime 99.9%. 
           Современные технологии и круглосуточная поддержка.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button 
-            size="lg" 
-            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
-            onClick={() => setActiveTab('plans')}
-          >
-            <Icon name="Rocket" size={20} className="mr-2" />
-            Выбрать тариф
-          </Button>
-          <Button size="lg" variant="outline">
-            <Icon name="Play" size={20} className="mr-2" />
-            Смотреть демо
-          </Button>
-        </div>
+
       </div>
       
       {/* Hero Image */}
