@@ -4,7 +4,7 @@ import Hero from '@/components/Hero';
 import Features from '@/components/Features';
 import Plans from '@/components/Plans';
 import Dashboard from '@/components/Dashboard';
-import { Support, About, Contacts } from '@/components/SectionPages';
+
 import Footer from '@/components/Footer';
 
 const Index = () => {
@@ -21,22 +21,15 @@ const Index = () => {
       />
 
       <main className="container mx-auto px-4 py-8">
-        {activeTab === 'home' && (
+        {isLoggedIn && activeTab === 'dashboard' ? (
+          <Dashboard />
+        ) : (
           <div className="space-y-16">
             <Hero setActiveTab={setActiveTab} />
+            <Plans />
             <Features />
           </div>
         )}
-
-        {activeTab === 'plans' && <Plans />}
-
-        {activeTab === 'dashboard' && isLoggedIn && <Dashboard />}
-
-        {activeTab === 'support' && <Support />}
-
-        {activeTab === 'about' && <About />}
-
-        {activeTab === 'contacts' && <Contacts />}
       </main>
 
       <Footer />

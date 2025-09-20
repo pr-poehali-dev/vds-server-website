@@ -32,11 +32,7 @@ const Header = ({ activeTab, setActiveTab, isLoggedIn, setIsLoggedIn }: HeaderPr
           </div>
           
           <nav className="hidden md:flex items-center space-x-2">
-            <NavButton tab="home">Главная</NavButton>
-            <NavButton tab="plans">Тарифы</NavButton>
-            <NavButton tab="support">Поддержка</NavButton>
-            <NavButton tab="about">О компании</NavButton>
-            <NavButton tab="contacts">Контакты</NavButton>
+            {/* Навигация убрана по запросу */}
           </nav>
 
           <div className="flex items-center space-x-4">
