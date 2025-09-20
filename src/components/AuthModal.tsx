@@ -436,7 +436,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2"
                 />
                 <label htmlFor="rememberMe" className="text-sm text-foreground select-none cursor-pointer">
-                  Запомнить меня (email и имя)
+                  Запомнить меня
                 </label>
               </div>
             )}
