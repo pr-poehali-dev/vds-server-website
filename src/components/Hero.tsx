@@ -13,13 +13,13 @@ const Hero = () => {
       </div>
       
       {/* Hero Image */}
-      <div className="mt-12 relative">
+      <div className="mt-12 relative -mx-4 md:-mx-8 lg:-mx-16">
         <img 
-          src="/img/ff42460f-beba-4bf0-a424-3dc1cc9e7eca.jpg" 
+          src="/img/eb312f13-d82a-4a67-a6fa-e51de6bf7e47.jpg" 
           alt="VDS серверы и технологии"
-          className="mx-auto max-w-3xl w-full rounded-2xl shadow-2xl animate-scale-in"
+          className="w-full h-64 md:h-80 lg:h-96 object-cover animate-scale-in"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-blue-600/20 to-transparent rounded-2xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-blue-600/20 to-transparent"></div>
       </div>
     </section>
   );
