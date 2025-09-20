@@ -12,7 +12,7 @@ const Footer = () => {
               <span className="text-xl font-bold">VDS SERVERS</span>
             </div>
             <p className="text-slate-400">
-              Надёжные VDS серверы для вашего бизнеса
+              Надежный хостинг для вашего бизнеса
             </p>
           </div>
           
