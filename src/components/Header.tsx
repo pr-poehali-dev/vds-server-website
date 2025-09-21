@@ -54,7 +54,7 @@ const Header = () => {
                 <div className="flex items-center space-x-2">
                   <span className="text-foreground font-medium">
                     <Icon name="User" size={16} className="mr-2 inline" />
-                    {currentUser.name}
+                    {currentUser.email}
                   </span>
                   <Button 
                     variant="ghost"
