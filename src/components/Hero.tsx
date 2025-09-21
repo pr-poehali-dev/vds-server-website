@@ -1,19 +1,8 @@
 const Hero = () => {
   return (
-    <section className="text-center py-16 animate-fade-in">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
-          Надёжные <span className="text-primary">VDS серверы</span>
-          <br />для вашего бизнеса
-        </h1>
-        <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-          Высокопроизводительные виртуальные серверы с гарантией uptime 99.9%. 
-          Современные технологии и круглосуточная поддержка.
-        </p>
-      </div>
-      
+    <section className="animate-fade-in">
       {/* Hero Image */}
-      <div className="mt-12 relative w-full">
+      <div className="relative w-full">
         <img 
           src="/img/ad7d4503-d3c5-43be-aeef-03fef966fe39.jpg" 
           alt="Серверная комната дата-центра"

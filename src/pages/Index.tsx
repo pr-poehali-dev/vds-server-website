@@ -29,10 +29,12 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <Header />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4">
         <div className="space-y-16">
           <Hero />
-          <Plans />
+          <div className="pt-16">
+            <Plans />
+          </div>
           <Features />
           <FAQ />
         </div>
