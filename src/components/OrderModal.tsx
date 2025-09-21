@@ -152,6 +152,8 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
                     <div className="text-3xl font-bold">{totalPrice}₽</div>
                   </div>
                   
+                  <hr className="mb-4" />
+                  
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
                       <span>Услуги (1 шт.)</span>
