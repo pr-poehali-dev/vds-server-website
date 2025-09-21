@@ -80,57 +80,7 @@ const AuthFormFields = ({
         </div>
       )}
       
-      {/* Логин для регистрации и входа */}
-      {(mode === 'register' || mode === 'login') && (
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            Логин
-          </label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={onInputChange}
-            className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
-              errors.username ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
-            }`}
-            placeholder="Введите ваш логин"
-            autoComplete="username"
-            required
-          />
-          
-          {/* Индикатор проверки уникальности логина */}
-          {formData.username.length >= 3 && (
-            <div className="mt-1">
-              {usernameCheckStatus === 'checking' && (
-                <p className="text-blue-500 text-sm flex items-center">
-                  <Icon name="Loader" size={14} className="mr-1 animate-spin" />
-                  Проверяем доступность логина...
-                </p>
-              )}
-              {usernameCheckStatus === 'available' && (
-                <p className="text-green-500 text-sm flex items-center">
-                  <Icon name="CheckCircle" size={14} className="mr-1" />
-                  Логин доступен
-                </p>
-              )}
-              {usernameCheckStatus === 'taken' && (
-                <p className="text-red-500 text-sm flex items-center">
-                  <Icon name="XCircle" size={14} className="mr-1" />
-                  Логин уже занят
-                </p>
-              )}
-            </div>
-          )}
-          
-          {errors.username && (
-            <p className="text-red-500 text-sm mt-1 flex items-center">
-              <Icon name="AlertCircle" size={14} className="mr-1" />
-              {errors.username}
-            </p>
-          )}
-        </div>
-      )}
+
       
       {/* E-mail для режима "забыл пароль" */}
       {mode === 'forgot' && (

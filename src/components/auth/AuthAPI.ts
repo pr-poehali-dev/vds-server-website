@@ -11,7 +11,6 @@ export const sendVerificationEmail = async (email: string, name: string, formDat
     const pendingUsers = JSON.parse(localStorage.getItem('pendingUsers') || '[]');
     pendingUsers.push({
       email: formData.email,
-      username: formData.username,
       name: formData.name,
       password: formData.password, // В реальности пароль хешируется на backend
       token: verificationToken,
@@ -41,7 +40,6 @@ export const sendVerificationEmail = async (email: string, name: string, formDat
 export const handleLogin = async (formData: any, setErrors: any, onAuthSuccess?: (user: { email: string; name: string }) => void) => {
   console.log('🔥 ВХОД: Начинаем процесс входа с данными:', { 
     email: formData.email, 
-    username: formData.username,
     hasPassword: !!formData.password 
   });
   try {
@@ -61,19 +59,17 @@ export const handleLogin = async (formData: any, setErrors: any, onAuthSuccess?:
     const testUsers = JSON.parse(localStorage.getItem('confirmedUsers') || '[]');
     console.log('👥 ДОСТУПНЫЕ ПОЛЬЗОВАТЕЛИ:', testUsers);
 
-    // Ищем пользователя по email, логину и паролю
+    // Ищем пользователя по email и паролю
     const foundUser = testUsers.find((user: any) => {
       const emailMatch = user.email === formData.email;
-      const usernameMatch = user.username === formData.username;
       const passwordMatch = user.password === formData.password;
       
       console.log(`🔍 Проверяем пользователя ${user.email}:`, {
         emailMatch: `${user.email} === ${formData.email} = ${emailMatch}`,
-        usernameMatch: `${user.username} === ${formData.username} = ${usernameMatch}`,
         passwordMatch: `****** === ****** = ${passwordMatch}`
       });
       
-      return emailMatch && usernameMatch && passwordMatch;
+      return emailMatch && passwordMatch;
     });
 
     if (foundUser) {

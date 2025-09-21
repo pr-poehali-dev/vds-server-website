@@ -158,14 +158,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       return;
     }
     
-    // Проверяем уникальность логина при регистрации
-    if (mode === 'register' && usernameCheckStatus === 'taken') {
-      setErrors(prev => ({
-        ...prev,
-        email: 'Этот логин уже занят'
-      }));
-      return;
-    }
+
     
     if (mode === 'forgot') {
       // Логика восстановления пароля
@@ -223,20 +216,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       setPasswordStrength(strength);
     }
     
-    // Проверяем уникальность логина с debounce
-    if (name === 'username' && mode === 'register') {
-      // Очищаем предыдущий таймер
-      if (usernameCheckDebounce) {
-        clearTimeout(usernameCheckDebounce);
-      }
-      
-      // Устанавливаем новый таймер для проверки
-      const newDebounce = setTimeout(() => {
-        checkUsernameAvailability(value, mode, setUsernameCheckStatus, setErrors);
-      }, 500);
-      
-      setUsernameCheckDebounce(newDebounce);
-    }
+
   };
 
   const handleRememberMeChange = (checked: boolean) => {
