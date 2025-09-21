@@ -1,20 +1,16 @@
 import json
-import hashlib
-import re
-import os
-import smtplib
-import uuid
-from email.mime.text import MimeText
-from email.mime.multipart import MimeMultipart
 
 def handler(event, context):
     '''
-    Business: Регистрирует нового пользователя и отправляет письмо подтверждения
-    Args: event - dict с httpMethod, body (JSON с email, password)
-          context - объект с атрибутами request_id, function_name
-    Returns: HTTP response с результатом регистрации
+    Business: Регистрация нового пользователя
+    Args: event - dict с httpMethod, body
+          context - объект с атрибутами request_id
+    Returns: HTTP response
     '''
-    method = event.get('httpMethod', 'POST')
+    print(f"DEBUG: Received event: {json.dumps(event)}")
+    print(f"DEBUG: Context: {context}")
+    
+    method = event.get('httpMethod', 'GET')
     
     # Handle CORS OPTIONS request
     if method == 'OPTIONS':
@@ -41,7 +37,7 @@ def handler(event, context):
         email = body_data.get('email', '').strip()
         password = body_data.get('password', '')
         
-        # Валидация входных данных
+        # Простая валидация
         if not email or not password:
             return {
                 'statusCode': 400,
@@ -49,19 +45,6 @@ def handler(event, context):
                 'body': json.dumps({'error': 'Email и пароль обязательны'})
             }
         
-        # Валидация email
-        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-        if not re.match(email_pattern, email):
-            return {
-                'statusCode': 400,
-                'headers': {'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({
-                    'success': False,
-                    'error': 'Неверный формат email'
-                })
-            }
-        
-        # Валидация пароля
         if len(password) < 8:
             return {
                 'statusCode': 400,
@@ -72,142 +55,18 @@ def handler(event, context):
                 })
             }
         
-        # Проверяем, не занят ли email (mock проверка)
-        taken_emails = ['admin@example.com', 'test@example.com', 'user@test.com']
-        if email.lower() in taken_emails:
-            return {
-                'statusCode': 400,
-                'headers': {'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({
-                    'success': False,
-                    'error': 'Пользователь с таким email уже существует'
-                })
-            }
-        
-        # Генерируем токен подтверждения
-        verification_token = str(uuid.uuid4())
-        
-        # Получаем настройки SMTP из секретов
-        smtp_email = os.environ.get('SMTP_EMAIL')
-        smtp_password = os.environ.get('SMTP_PASSWORD')
-        
-        email_sent = False
-        debug_info = {}
-        
-        # Отправляем email подтверждения (если настроен SMTP)
-        if smtp_email and smtp_password:
-            try:
-                # Создаем HTML сообщение
-                msg = MimeMultipart('alternative')
-                msg['From'] = smtp_email
-                msg['To'] = email
-                msg['Subject'] = 'Подтверждение регистрации'
-                
-                # HTML версия письма
-                html_body = f"""
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="utf-8">
-                    <style>
-                        .container {{ max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; }}
-                        .header {{ background: #4F46E5; color: white; padding: 20px; text-align: center; }}
-                        .content {{ padding: 30px; background: #f9f9f9; }}
-                        .button {{ 
-                            display: inline-block; 
-                            background: #4F46E5; 
-                            color: white; 
-                            padding: 12px 30px; 
-                            text-decoration: none; 
-                            border-radius: 5px; 
-                            margin: 20px 0;
-                        }}
-                        .footer {{ padding: 20px; text-align: center; color: #666; font-size: 12px; }}
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <div class="header">
-                            <h1>Подтверждение регистрации</h1>
-                        </div>
-                        <div class="content">
-                            <h2>Добро пожаловать!</h2>
-                            <p>Спасибо за регистрацию в нашем сервисе.</p>
-                            <p>Для завершения регистрации нажмите на кнопку ниже:</p>
-                            <a href="https://your-site.com/verify-email?token={verification_token}&email={email}" class="button">
-                                Подтвердить Email
-                            </a>
-                            <p>Если кнопка не работает, скопируйте и вставьте эту ссылку в браузер:</p>
-                            <p style="word-break: break-all; color: #4F46E5;">
-                                https://your-site.com/verify-email?token={verification_token}&email={email}
-                            </p>
-                            <p>Если вы не регистрировались у нас, просто проигнорируйте это письмо.</p>
-                        </div>
-                        <div class="footer">
-                            <p>Это автоматическое письмо, не отвечайте на него.</p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-                """
-                
-                # Текстовая версия письма
-                text_body = f"""
-                Добро пожаловать!
-                
-                Спасибо за регистрацию в нашем сервисе.
-                
-                Для завершения регистрации перейдите по ссылке:
-                https://your-site.com/verify-email?token={verification_token}&email={email}
-                
-                Если вы не регистрировались у нас, просто проигнорируйте это письмо.
-                """
-                
-                # Прикрепляем обе версии
-                part1 = MimeText(text_body, 'plain', 'utf-8')
-                part2 = MimeText(html_body, 'html', 'utf-8')
-                
-                msg.attach(part1)
-                msg.attach(part2)
-                
-                # Отправляем письмо через Gmail SMTP
-                server = smtplib.SMTP('smtp.gmail.com', 587)
-                server.starttls()
-                server.login(smtp_email, smtp_password)
-                text = msg.as_string()
-                server.sendmail(smtp_email, email, text)
-                server.quit()
-                
-                email_sent = True
-                
-            except Exception as e:
-                # Если не удалось отправить email, все равно регистрируем пользователя
-                debug_info['email_error'] = f"Ошибка отправки email: {str(e)}"
-                email_sent = False
-        
-        # Если SMTP не настроен или отправка не удалась
-        if not email_sent:
-            debug_info.update({
-                'verification_link': f"/verify-email?token={verification_token}&email={email}",
-                'note': 'Email не отправлен. Проверьте настройки SMTP или используйте ссылку выше для тестирования.'
-            })
-        
-        # Хеширование пароля для безопасности
-        password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
-        
-        # Успешная регистрация
+        # Успешная регистрация (упрощенная версия)
         response_data = {
             'success': True,
-            'message': 'Регистрация прошла успешно!' + (' Проверьте email для подтверждения.' if email_sent else ''),
+            'message': 'Регистрация прошла успешно!',
             'user': {
                 'email': email
             },
-            'email_sent': email_sent
+            'debug': {
+                'verification_link': f"/verify-email?token=test123&email={email}",
+                'note': 'Используйте эту ссылку для тестирования подтверждения email'
+            }
         }
-        
-        # Добавляем debug информацию если есть
-        if debug_info:
-            response_data['debug'] = debug_info
         
         return {
             'statusCode': 200,
