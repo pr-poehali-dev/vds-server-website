@@ -234,10 +234,67 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     return !Object.values(newErrors).some(error => error !== '');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Обработка регистрации пользователя
+  const handleRegistration = async () => {
+    try {
+      const response = await fetch('https://functions.poehali.dev/2c530527-bc67-4b37-949a-334155677b68', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.email,
+          name: formData.name,
+          password: formData.password
+        })
+      });
+
+      const result = await response.json();
+      
+      if (response.ok && result.success) {
+        // Успешная регистрация
+        const user = { 
+          email: formData.email, 
+          name: formData.name 
+        };
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        
+        if (onAuthSuccess) {
+          onAuthSuccess(user);
+        }
+        
+        alert('Регистрация выполнена успешно!');
+        onClose();
+      } else {
+        // Ошибка регистрации
+        const errorMessage = result.error || 'Ошибка при регистрации';
+        setErrors(prev => ({
+          ...prev,
+          email: errorMessage
+        }));
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      setErrors(prev => ({
+        ...prev,
+        email: 'Ошибка сети. Попробуйте позже.'
+      }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) {
+      return;
+    }
+    
+    // Проверяем уникальность логина при регистрации
+    if (mode === 'register' && usernameCheckStatus === 'taken') {
+      setErrors(prev => ({
+        ...prev,
+        email: 'Этот логин уже занят'
+      }));
       return;
     }
     
@@ -245,8 +302,11 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       // Логика восстановления пароля
       console.log('Reset password for:', formData.email);
       alert('Ссылка для восстановления пароля отправлена на ваш email!');
+    } else if (mode === 'register') {
+      // Регистрация нового пользователя
+      await handleRegistration();
     } else {
-      // Логика авторизации/регистрации
+      // Авторизация (пока mock)
       const user = { 
         email: formData.email, 
         name: formData.name || 'Пользователь' 
@@ -258,9 +318,9 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       }
       
       console.log('Auth data:', formData);
-      alert(`${mode === 'login' ? 'Вход' : 'Регистрация'} выполнен успешно!`);
+      alert('Вход выполнен успешно!');
+      onClose();
     }
-    onClose();
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

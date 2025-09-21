@@ -1,0 +1,52 @@
+{
+  "tests": [
+    {
+      "name": "Register new user successfully",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "username": "newuser123",
+        "name": "Новый Пользователь",
+        "password": "SecurePass123!"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "message": "Пользователь успешно зарегистрирован"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Register with taken username",
+      "method": "POST", 
+      "path": "/",
+      "body": {
+        "username": "admin",
+        "name": "Admin User",
+        "password": "SecurePass123!"
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "success": false,
+        "error": "Этот логин уже занят"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Register with short password",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "username": "testuser",
+        "name": "Test User", 
+        "password": "123"
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "success": false,
+        "error": "Пароль должен содержать минимум 8 символов"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
