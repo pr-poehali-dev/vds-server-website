@@ -54,7 +54,7 @@ const Plans = () => {
       <div className="text-center">
         <h1 className="text-4xl font-bold text-foreground mb-4">Выберите тарифный план</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Гибкие тарифы для проектов любого масштаба. Все планы включают SSD диски и круглосуточную поддержку
+          Гибкие тарифы для проектов любого масштаба. Все планы включают NVMe диски и круглосуточную поддержку
         </p>
       </div>
 
