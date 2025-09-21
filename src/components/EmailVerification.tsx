@@ -88,7 +88,7 @@ const EmailVerification = () => {
   };
 
   const handleBackToLogin = () => {
-    navigate('/');
+    navigate('/?login=true');
   };
 
   const handleResendEmail = () => {

@@ -1,41 +1,35 @@
 {
   "tests": [
     {
-      "name": "Send verification email",
-      "method": "POST",
-      "path": "/",
-      "body": {
-        "email": "test@example.com",
-        "name": "Test User"
-      },
+      "name": "Verify email with valid token",
+      "method": "GET",
+      "path": "/?token=test-token-123456&email=user@example.com",
       "expectedStatus": 200,
       "expectedBody": {
         "success": true,
-        "message": "string"
+        "message": "Email успешно подтвержден"
       },
       "bodyMatcher": "partial"
     },
     {
-      "name": "Verify email with token",
+      "name": "Verify email with missing token",
       "method": "GET", 
-      "path": "/?token=test-token&email=test@example.com",
-      "expectedStatus": 200,
-      "expectedBody": {
-        "success": true,
-        "email": "test@example.com"
-      },
-      "bodyMatcher": "partial"
-    },
-    {
-      "name": "Missing email parameter",
-      "method": "POST",
-      "path": "/",
-      "body": {
-        "name": "Test User"
-      },
+      "path": "/?email=user@example.com",
       "expectedStatus": 400,
       "expectedBody": {
-        "error": "string"
+        "success": false,
+        "error": "Токен и email обязательны"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Verify email with invalid token",
+      "method": "GET",
+      "path": "/?token=123&email=user@example.com",
+      "expectedStatus": 400,
+      "expectedBody": {
+        "success": false,
+        "error": "Неверный токен подтверждения"
       },
       "bodyMatcher": "partial"
     }

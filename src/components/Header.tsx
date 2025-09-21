@@ -12,6 +12,17 @@ const Header = () => {
     if (userData) {
       setCurrentUser(JSON.parse(userData));
     }
+
+    // Слушатель события для автоматического открытия модального окна
+    const handleOpenAuthModal = (event: CustomEvent) => {
+      setIsAuthModalOpen(true);
+    };
+
+    window.addEventListener('openAuthModal', handleOpenAuthModal as EventListener);
+
+    return () => {
+      window.removeEventListener('openAuthModal', handleOpenAuthModal as EventListener);
+    };
   }, []);
 
   const handleAuthSuccess = (user: { email: string; name: string }) => {

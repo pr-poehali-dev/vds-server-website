@@ -134,12 +134,12 @@ def handler(event, context):
                             <h2>Добро пожаловать!</h2>
                             <p>Спасибо за регистрацию в нашем сервисе.</p>
                             <p>Для завершения регистрации нажмите на кнопку ниже:</p>
-                            <a href="{window.location.origin if 'window' in globals() else 'https://your-site.com'}/verify?token={verification_token}&email={email}" class="button">
+                            <a href="https://your-site.com/verify-email?token={verification_token}&email={email}" class="button">
                                 Подтвердить Email
                             </a>
                             <p>Если кнопка не работает, скопируйте и вставьте эту ссылку в браузер:</p>
                             <p style="word-break: break-all; color: #4F46E5;">
-                                {window.location.origin if 'window' in globals() else 'https://your-site.com'}/verify?token={verification_token}&email={email}
+                                https://your-site.com/verify-email?token={verification_token}&email={email}
                             </p>
                             <p>Если вы не регистрировались у нас, просто проигнорируйте это письмо.</p>
                         </div>
@@ -158,7 +158,7 @@ def handler(event, context):
                 Спасибо за регистрацию в нашем сервисе.
                 
                 Для завершения регистрации перейдите по ссылке:
-                https://your-site.com/verify?token={verification_token}&email={email}
+                https://your-site.com/verify-email?token={verification_token}&email={email}
                 
                 Если вы не регистрировались у нас, просто проигнорируйте это письмо.
                 """
@@ -188,7 +188,7 @@ def handler(event, context):
         # Если SMTP не настроен или отправка не удалась
         if not email_sent:
             debug_info.update({
-                'verification_link': f"/verify?token={verification_token}&email={email}",
+                'verification_link': f"/verify-email?token={verification_token}&email={email}",
                 'note': 'Email не отправлен. Проверьте настройки SMTP или используйте ссылку выше для тестирования.'
             })
         
