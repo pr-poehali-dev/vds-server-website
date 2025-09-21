@@ -89,7 +89,7 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
                 
                 <div className="relative inline-block">
                   <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                    <SelectTrigger className="w-full max-w-xs">
+                    <SelectTrigger className="w-full max-w-xs focus:ring-0 focus:ring-offset-0 focus:outline-none">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -111,34 +111,30 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
               </div>
 
               {/* Quantity and Price */}
-              <div className="flex items-center justify-between p-4 bg-white rounded-lg border">
-                <span className="font-medium">Кол-во:</span>
-                <div className="flex items-center gap-4">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    disabled={quantity <= 1}
-                  >
-                    <Icon name="Minus" size={16} />
-                  </Button>
-                  <span className="text-xl font-bold">{quantity}</span>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => setQuantity(quantity + 1)}
-                  >
-                    <Icon name="Plus" size={16} />
-                  </Button>
-                  <span className="text-2xl font-bold ml-8">{totalPrice}₽</span>
+              <div className="p-4 bg-white rounded-lg border">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Кол-во:</span>
+                  <div className="flex items-center gap-4">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      disabled={quantity <= 1}
+                    >
+                      <Icon name="Minus" size={16} />
+                    </Button>
+                    <span className="text-xl font-bold">{quantity}</span>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setQuantity(quantity + 1)}
+                    >
+                      <Icon name="Plus" size={16} />
+                    </Button>
+                    <span className="text-2xl font-bold ml-8">{totalPrice}₽</span>
+                  </div>
                 </div>
               </div>
-
-              {/* Configure Tariff */}
-              <Button variant="outline" className="w-full justify-center">
-                Настроить тариф
-                <Icon name="ChevronDown" size={16} className="ml-2" />
-              </Button>
             </div>
 
             {/* Right Column - Order Summary */}
