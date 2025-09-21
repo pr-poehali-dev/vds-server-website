@@ -75,7 +75,7 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
                   </div>
                 </div>
                 <div className="ml-auto text-right text-gray-500 text-sm">
-                  <div>CPU: {specs.cores}ядер RAM: {specs.ram}ГБ SSD: {specs.nvme}ГБ</div>
+                  <div>{plan.features[0]}, {plan.features[1]}, {plan.features[2]}</div>
                 </div>
 
               </div>
