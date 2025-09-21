@@ -1,12 +1,17 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
+import OrderModal from './OrderModal';
 
 const Plans = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
+
   const handleSelectPlan = (plan: any) => {
-    // Перенаправляем на страницу заказа с параметром плана
-    window.location.href = `/order?plan=${plan.name}`;
+    setSelectedPlan(plan);
+    setIsModalOpen(true);
   };
 
   const plans = [
@@ -102,6 +107,12 @@ const Plans = () => {
           </Card>
         ))}
       </div>
+      
+      <OrderModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        plan={selectedPlan}
+      />
     </div>
   );
 };
