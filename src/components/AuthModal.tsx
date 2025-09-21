@@ -254,7 +254,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
         // Авторизация успешна
         const user = {
           email: foundUser.email,
-          name: foundUser.email // Используем email вместо имени
+          name: foundUser.name
         };
         
         localStorage.setItem('currentUser', JSON.stringify(user));
@@ -416,18 +416,18 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
             {mode === 'register' && (
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  Имя
+                  E-mail
                 </label>
                 <input
-                  type="text"
+                  type="email"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
                   className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
                     errors.name ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
                   }`}
-                  placeholder="Введите ваше имя"
-                  autoComplete="given-name"
+                  placeholder="Введите ваш e-mail"
+                  autoComplete="email"
                   required
                 />
                 {errors.name && (
