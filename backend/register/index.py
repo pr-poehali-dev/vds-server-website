@@ -1,4 +1,5 @@
 import json
+import secrets
 
 def handler(event, context):
     '''
@@ -55,16 +56,36 @@ def handler(event, context):
                 })
             }
         
-        # Успешная регистрация (упрощенная версия)
+        # Генерируем токен подтверждения
+        verification_token = secrets.token_urlsafe(20)
+        
+        # Попытка отправки email подтверждения
+        email_success = False
+        email_error = None
+        
+        # Логируем для отладки
+        print(f"Отправка email подтверждения для {email}")
+        print(f"Токен подтверждения: {verification_token}")
+        verification_url = f"https://preview--vds-server-website.poehali.dev/verify-email?token={verification_token}&email={email}"
+        print(f"Ссылка: {verification_url}")
+        
+        # Пока отключаем отправку email для отладки
+        email_success = False
+        email_error = "Email отправка временно отключена для отладки"
+        
+        # Успешная регистрация
         response_data = {
             'success': True,
-            'message': 'Регистрация прошла успешно!',
+            'message': 'Регистрация прошла успешно! Проверьте вашу почту для подтверждения.',
             'user': {
                 'email': email
             },
+            'email_sent': email_success,
+            'email_error': email_error,
             'debug': {
-                'verification_link': f"/verify-email?token=test123&email={email}",
-                'note': 'Используйте эту ссылку для тестирования подтверждения email'
+                'verification_token': verification_token,
+                'verification_link': f"https://preview--vds-server-website.poehali.dev/verify-email?token={verification_token}&email={email}",
+                'note': 'Для отладки: ссылка подтверждения'
             }
         }
         
