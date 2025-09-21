@@ -21,6 +21,7 @@ interface OrderModalProps {
 const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
   const [selectedPeriod, setSelectedPeriod] = useState("3");
   const [quantity, setQuantity] = useState(1);
+  const [isProcessing, setIsProcessing] = useState(false);
   
   if (!plan) return null;
   
@@ -43,6 +44,41 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
     cores: plan.features[0]?.split(' ')[0] || '1',
     ram: plan.features[1]?.split(' ')[0] || '1',
     nvme: plan.features[2]?.split(' ')[0] || '20'
+  };
+
+  const handlePayment = async () => {
+    setIsProcessing(true);
+    
+    try {
+      const paymentData = {
+        amount: totalPrice,
+        planName: plan.name,
+        quantity: quantity,
+        period: selectedPeriod
+      };
+
+      const response = await fetch('https://functions.poehali.dev/4d04c70a-4ea3-4f73-a267-f1c35a8e3b47', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(paymentData)
+      });
+
+      const result = await response.json();
+      
+      if (response.ok && result.payment_url) {
+        // Redirect to payment gateway
+        window.open(result.payment_url, '_blank');
+      } else {
+        alert('Ошибка при создании платежа. Попробуйте еще раз.');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('Ошибка при создании платежа. Попробуйте еще раз.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -171,8 +207,12 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
 
 
                   {/* Pay Button */}
-                  <Button className="w-full mt-6 bg-green-500 hover:bg-green-600 text-white text-lg py-6">
-                    Оплатить
+                  <Button 
+                    className="w-full mt-6 bg-green-500 hover:bg-green-600 text-white text-lg py-6"
+                    onClick={handlePayment}
+                    disabled={isProcessing}
+                  >
+                    {isProcessing ? 'Обработка...' : 'Оплатить'}
                   </Button>
                 </CardContent>
               </Card>

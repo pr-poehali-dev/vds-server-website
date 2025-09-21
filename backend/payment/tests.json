@@ -1,0 +1,36 @@
+{
+  "tests": [
+    {
+      "name": "Create payment request",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "amount": 1999,
+        "planName": "Pro",
+        "quantity": 1,
+        "period": "3"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "payment_id": "string",
+        "amount": 1999,
+        "plan_name": "Pro",
+        "status": "pending",
+        "payment_url": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Check payment status",
+      "method": "GET",
+      "path": "/?payment_id=test-123",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "payment_id": "test-123",
+        "status": "string",
+        "amount": "number"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
