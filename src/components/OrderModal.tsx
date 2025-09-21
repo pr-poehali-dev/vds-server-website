@@ -51,7 +51,7 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
   };
 
   const checkUserAuth = () => {
-    const userData = localStorage.getItem('user');
+    const userData = localStorage.getItem('currentUser');
     if (userData) {
       try {
         const user = JSON.parse(userData);
@@ -59,7 +59,7 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
         return true;
       } catch (error) {
         console.error('Error parsing user data:', error);
-        localStorage.removeItem('user');
+        localStorage.removeItem('currentUser');
       }
     }
     return false;

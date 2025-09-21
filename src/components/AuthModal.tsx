@@ -212,7 +212,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
         email: formData.email, 
         name: formData.name || 'Пользователь' 
       };
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('currentUser', JSON.stringify(user));
       
       if (onAuthSuccess) {
         onAuthSuccess(user);

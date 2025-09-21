@@ -1,10 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 import AuthModal from '@/components/AuthModal';
 
 const Header = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ email: string; name: string } | null>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('currentUser');
+    if (userData) {
+      setCurrentUser(JSON.parse(userData));
+    }
+  }, []);
+
+  const handleAuthSuccess = (user: { email: string; name: string }) => {
+    setCurrentUser(user);
+    setIsAuthModalOpen(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    setCurrentUser(null);
+  };
 
   return (
     <>
@@ -21,13 +39,30 @@ const Header = () => {
             </nav>
 
             <div className="flex items-center space-x-4">
-              <Button 
-                variant="outline"
-                onClick={() => setIsAuthModalOpen(true)}
-              >
-                <Icon name="User" size={16} className="mr-2" />
-                Войти
-              </Button>
+              {currentUser ? (
+                <div className="flex items-center space-x-2">
+                  <span className="text-foreground font-medium">
+                    <Icon name="User" size={16} className="mr-2 inline" />
+                    {currentUser.name}
+                  </span>
+                  <Button 
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleLogout}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <Icon name="LogOut" size={16} />
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  variant="outline"
+                  onClick={() => setIsAuthModalOpen(true)}
+                >
+                  <Icon name="User" size={16} className="mr-2" />
+                  Войти
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -36,6 +71,7 @@ const Header = () => {
       <AuthModal 
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
       />
     </>
   );
