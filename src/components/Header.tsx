@@ -52,10 +52,10 @@ const Header = () => {
             <div className="flex items-center space-x-4">
               {currentUser ? (
                 <div className="flex items-center space-x-2">
-                  <span className="text-foreground font-medium">
-                    <Icon name="User" size={16} className="mr-2 inline" />
+                  <button className="text-foreground font-medium hover:text-blue-600 transition-colors cursor-pointer flex items-center">
+                    <Icon name="User" size={16} className="mr-2" />
                     {currentUser.email}
-                  </span>
+                  </button>
                   <Button 
                     variant="ghost"
                     size="sm"
