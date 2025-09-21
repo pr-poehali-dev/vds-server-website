@@ -66,16 +66,18 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
                 <div>
                   <h1 className="text-2xl font-bold">{plan.name}</h1>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full bg-gradient-to-b from-white via-blue-500 to-red-500 border border-gray-300"></div>
+                    <div className="w-4 h-4 rounded-full overflow-hidden border border-gray-300 flex flex-col">
+                      <div className="h-1/3 bg-white"></div>
+                      <div className="h-1/3 bg-blue-600"></div>
+                      <div className="h-1/3 bg-red-600"></div>
+                    </div>
                     <span className="text-gray-600">Смоленск</span>
                   </div>
                 </div>
                 <div className="ml-auto text-right text-gray-500 text-sm">
                   <div>CPU: {specs.cores}ядер RAM: {specs.ram}ГБ SSD: {specs.nvme}ГБ</div>
                 </div>
-                <Button variant="ghost" size="sm">
-                  <Icon name="Trash2" size={16} />
-                </Button>
+
               </div>
 
               {/* Payment Period */}
@@ -105,9 +107,7 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
                   )}
                 </div>
                 
-                <button className="text-green-600 text-sm mt-2 underline">
-                  Как списываются деньги за услуги?
-                </button>
+
               </div>
 
               {/* Quantity and Price */}
