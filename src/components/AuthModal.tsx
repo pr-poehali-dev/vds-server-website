@@ -568,10 +568,10 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
                 </div>
               )}
               
-              {errors.email && (
+              {errors.username && (
                 <p className="text-red-500 text-sm mt-1 flex items-center">
                   <Icon name="AlertCircle" size={14} className="mr-1" />
-                  {errors.email}
+                  {errors.username}
                 </p>
               )}
             </div>
