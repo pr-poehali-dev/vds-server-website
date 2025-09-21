@@ -235,6 +235,51 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
   };
 
   // Обработка регистрации пользователя
+  const handleLogin = async () => {
+    try {
+      // Временная mock-авторизация с тестовыми пользователями
+      const testUsers = [
+        { email: 'test@example.com', password: 'testpassword', name: 'Тестовый пользователь' },
+        { email: 'admin@example.com', password: 'admin123', name: 'Администратор' },
+        { email: 'user@test.com', password: 'password123', name: 'Пользователь' }
+      ];
+
+      // Ищем пользователя
+      const foundUser = testUsers.find(user => 
+        user.email === formData.email && user.password === formData.password
+      );
+
+      if (foundUser) {
+        // Авторизация успешна
+        const user = {
+          email: foundUser.email,
+          name: foundUser.name
+        };
+        
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        
+        if (onAuthSuccess) {
+          onAuthSuccess(user);
+        }
+        
+        alert('Вход выполнен успешно!');
+        onClose();
+      } else {
+        // Неверные данные
+        setErrors(prev => ({
+          ...prev,
+          email: 'Неверный логин или пароль'
+        }));
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setErrors(prev => ({
+        ...prev,
+        email: 'Ошибка сети. Попробуйте позже.'
+      }));
+    }
+  };
+
   const handleRegistration = async () => {
     try {
       const response = await fetch('https://functions.poehali.dev/2c530527-bc67-4b37-949a-334155677b68', {
@@ -306,20 +351,8 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       // Регистрация нового пользователя
       await handleRegistration();
     } else {
-      // Авторизация (пока mock)
-      const user = { 
-        email: formData.email, 
-        name: formData.name || 'Пользователь' 
-      };
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      
-      if (onAuthSuccess) {
-        onAuthSuccess(user);
-      }
-      
-      console.log('Auth data:', formData);
-      alert('Вход выполнен успешно!');
-      onClose();
+      // Авторизация через API
+      await handleLogin();
     }
   };
 
