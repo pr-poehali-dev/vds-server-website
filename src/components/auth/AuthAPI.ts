@@ -38,6 +38,7 @@ export const sendVerificationEmail = async (email: string, name: string, formDat
 
 // Обработка регистрации пользователя
 export const handleLogin = async (formData: any, setErrors: any, onAuthSuccess?: (user: { email: string; name: string }) => void) => {
+  console.log('🔥 ВХОД: Начинаем процесс входа с данными:', { email: formData.email, hasPassword: !!formData.password });
   try {
     // Инициализация подтвержденных тестовых пользователей (только при первом запуске)
     const confirmedUsers = JSON.parse(localStorage.getItem('confirmedUsers') || '[]');
@@ -58,6 +59,7 @@ export const handleLogin = async (formData: any, setErrors: any, onAuthSuccess?:
     );
 
     if (foundUser) {
+      console.log('✅ ВХОД: Пользователь найден!', foundUser);
       // Проверяем подтверждение email
       const confirmedUsers = JSON.parse(localStorage.getItem('confirmedUsers') || '[]');
       const isEmailConfirmed = confirmedUsers.some((user: any) => user.email === foundUser.email);
@@ -84,6 +86,8 @@ export const handleLogin = async (formData: any, setErrors: any, onAuthSuccess?:
       
       return { success: true, user };
     } else {
+      console.log('❌ ВХОД: Пользователь не найден или неверный пароль');
+      console.log('Доступные пользователи:', testUsers);
       // Неверные данные
       setErrors((prev: any) => ({
         ...prev,

@@ -144,6 +144,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🚀 SUBMIT: Форма отправлена, режим:', mode, 'данные:', formData);
     
     const validationErrors = validateForm(mode, formData);
     setErrors(validationErrors);
