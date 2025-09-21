@@ -245,12 +245,18 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
   // Обработка регистрации пользователя
   const handleLogin = async () => {
     try {
+      // Инициализация подтвержденных тестовых пользователей (только при первом запуске)
+      const confirmedUsers = JSON.parse(localStorage.getItem('confirmedUsers') || '[]');
+      if (confirmedUsers.length === 0) {
+        const initialUsers = [
+          { email: 'test@example.com', password: 'testpassword', name: 'Тестовый пользователь', confirmedAt: Date.now() },
+          { email: 'admin@example.com', password: 'admin123', name: 'Администратор', confirmedAt: Date.now() }
+        ];
+        localStorage.setItem('confirmedUsers', JSON.stringify(initialUsers));
+      }
+
       // Временная mock-авторизация с тестовыми пользователями
-      const testUsers = [
-        { email: 'test@example.com', password: 'testpassword', name: 'Тестовый пользователь' },
-        { email: 'admin@example.com', password: 'admin123', name: 'Администратор' },
-        { email: 'user@test.com', password: 'password123', name: 'Пользователь' }
-      ];
+      const testUsers = JSON.parse(localStorage.getItem('confirmedUsers') || '[]');
 
       // Ищем пользователя
       const foundUser = testUsers.find(user => 
@@ -258,6 +264,18 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       );
 
       if (foundUser) {
+        // Проверяем подтверждение email
+        const confirmedUsers = JSON.parse(localStorage.getItem('confirmedUsers') || '[]');
+        const isEmailConfirmed = confirmedUsers.some((user: any) => user.email === foundUser.email);
+        
+        if (!isEmailConfirmed) {
+          setErrors(prev => ({
+            ...prev,
+            email: 'Email не подтвержден. Проверьте почту и перейдите по ссылке из письма.'
+          }));
+          return;
+        }
+        
         // Авторизация успешна
         const user = {
           email: foundUser.email,
@@ -288,6 +306,44 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     }
   };
 
+  // Функция отправки email для подтверждения
+  const sendVerificationEmail = async (email: string, name: string) => {
+    try {
+      // Mock отправка email - в реальности здесь будет вызов backend функции
+      console.log(`Отправка email подтверждения для ${email}`);
+      
+      // Генерируем токен (в реальности это делается на backend)
+      const verificationToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
+      
+      // Сохраняем информацию о неподтвержденном пользователе
+      const pendingUsers = JSON.parse(localStorage.getItem('pendingUsers') || '[]');
+      pendingUsers.push({
+        email: formData.email,
+        name: formData.name,
+        password: formData.password, // В реальности пароль хешируется на backend
+        token: verificationToken,
+        timestamp: Date.now()
+      });
+      localStorage.setItem('pendingUsers', JSON.stringify(pendingUsers));
+      
+      // В реальности здесь отправка через backend API
+      /*
+      const response = await fetch('https://functions.poehali.dev/email-verify-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name })
+      });
+      */
+      
+      console.log(`Токен подтверждения: ${verificationToken}`);
+      console.log(`Ссылка: ${window.location.origin}/verify-email?token=${verificationToken}&email=${email}`);
+      
+    } catch (error) {
+      console.error('Ошибка отправки email:', error);
+      throw error;
+    }
+  };
+
   const handleRegistration = async () => {
     try {
       const response = await fetch('https://functions.poehali.dev/2c530527-bc67-4b37-949a-334155677b68', {
@@ -305,19 +361,14 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       const result = await response.json();
       
       if (response.ok && result.success) {
-        // Успешная регистрация
-        const user = { 
-          email: formData.email, 
-          name: formData.name 
-        };
-        localStorage.setItem('currentUser', JSON.stringify(user));
+        // Успешная регистрация - отправляем email для подтверждения
+        await sendVerificationEmail(formData.email, formData.name);
         
-        if (onAuthSuccess) {
-          onAuthSuccess(user);
-        }
+        alert('Регистрация выполнена! Проверьте ваш email и перейдите по ссылке для подтверждения аккаунта.');
         
-        alert('Регистрация выполнена успешно!');
-        onClose();
+        // Переключаемся на форму входа
+        setMode('login');
+        clearForm();
       } else {
         // Ошибка регистрации
         const errorMessage = result.error || 'Ошибка при регистрации';

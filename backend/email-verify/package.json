@@ -1,0 +1,8 @@
+{
+  "name": "email-verify",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "@types/node": "^18.0.0"
+  }
+}
