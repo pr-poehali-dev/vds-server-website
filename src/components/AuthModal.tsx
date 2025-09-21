@@ -238,10 +238,11 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
   // Валидация всей формы
   const validateForm = (): boolean => {
     const newErrors = {
-      email: validateEmail(formData.email),
+      email: mode === 'register' ? validateEmailField(formData.email) : validateEmail(formData.email),
+      username: mode === 'register' ? validateEmail(formData.username) : '',
       password: mode !== 'forgot' ? validatePassword(formData.password) : '',
       confirmPassword: mode === 'register' ? validateConfirmPassword(formData.confirmPassword, formData.password) : '',
-      name: mode === 'register' ? validateEmailField(formData.name) : ''
+      name: ''
     };
     
     setErrors(newErrors);
