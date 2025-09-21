@@ -85,9 +85,10 @@ export const validateForm = (
   }
 ): { email: string; username: string; password: string; confirmPassword: string; name: string } => {
   const newErrors = {
-    email: mode === 'register' ? validateEmailField(formData.email) : validateUsername(formData.email),
+    email: validateEmailField(formData.email),
     username: mode === 'register' ? validateUsername(formData.username) : '',
-    password: mode !== 'forgot' ? validatePassword(formData.password) : '',
+    password: mode === 'register' ? validatePassword(formData.password) : 
+              mode === 'login' ? (formData.password ? '' : 'Пароль обязателен') : '',
     confirmPassword: mode === 'register' ? validateConfirmPassword(formData.confirmPassword, formData.password) : '',
     name: ''
   };
