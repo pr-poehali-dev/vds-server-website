@@ -11,6 +11,7 @@ export const sendVerificationEmail = async (email: string, name: string, formDat
     const pendingUsers = JSON.parse(localStorage.getItem('pendingUsers') || '[]');
     pendingUsers.push({
       email: formData.email,
+      username: formData.username,
       name: formData.name,
       password: formData.password, // В реальности пароль хешируется на backend
       token: verificationToken,
@@ -41,21 +42,25 @@ export const handleLogin = async (formData: any, setErrors: any, onAuthSuccess?:
   console.log('🔥 ВХОД: Начинаем процесс входа с данными:', { email: formData.email, hasPassword: !!formData.password });
   try {
     // Инициализация подтвержденных тестовых пользователей (только при первом запуске)
+    const dataVersion = localStorage.getItem('userDataVersion');
     const confirmedUsers = JSON.parse(localStorage.getItem('confirmedUsers') || '[]');
-    if (confirmedUsers.length === 0) {
+    if (confirmedUsers.length === 0 || dataVersion !== '2.0') {
       const initialUsers = [
-        { email: 'test@example.com', password: 'testpassword', name: 'Тестовый пользователь', confirmedAt: Date.now() },
-        { email: 'admin@example.com', password: 'admin123', name: 'Администратор', confirmedAt: Date.now() }
+        { email: 'test@example.com', username: 'testuser', password: 'testpassword', name: 'Тестовый пользователь', confirmedAt: Date.now() },
+        { email: 'admin@example.com', username: 'admin', password: 'admin123', name: 'Администратор', confirmedAt: Date.now() }
       ];
       localStorage.setItem('confirmedUsers', JSON.stringify(initialUsers));
+      localStorage.setItem('userDataVersion', '2.0');
     }
 
     // Временная mock-авторизация с тестовыми пользователями
     const testUsers = JSON.parse(localStorage.getItem('confirmedUsers') || '[]');
 
-    // Ищем пользователя
+    // Ищем пользователя по email, логину и паролю
     const foundUser = testUsers.find((user: any) => 
-      user.email === formData.email && user.password === formData.password
+      user.email === formData.email && 
+      user.username === formData.username && 
+      user.password === formData.password
     );
 
     if (foundUser) {

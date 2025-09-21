@@ -80,8 +80,8 @@ const AuthFormFields = ({
         </div>
       )}
       
-      {/* Логин только для регистрации */}
-      {mode === 'register' && (
+      {/* Логин для регистрации и входа */}
+      {(mode === 'register' || mode === 'login') && (
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">
             Логин
