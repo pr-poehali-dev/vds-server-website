@@ -117,6 +117,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     }));
     setErrors({
       email: '',
+      username: '',
       password: '',
       confirmPassword: '',
       name: ''
@@ -145,12 +146,12 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       if (!available) {
         setErrors(prev => ({
           ...prev,
-          email: 'Этот логин уже занят'
+          username: 'Этот логин уже занят'
         }));
       } else {
         setErrors(prev => ({
           ...prev,
-          email: ''
+          username: ''
         }));
       }
     } catch (error) {
@@ -160,11 +161,11 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
   };
 
   // Валидация логина
-  const validateEmail = (email: string): string => {
-    if (!email) return 'Логин обязателен';
-    if (email.length < 3) return 'Логин должен содержать минимум 3 символа';
-    if (email.length > 20) return 'Логин не должен превышать 20 символов';
-    if (!/^[a-zA-Z0-9_]+$/.test(email)) return 'Логин может содержать только буквы, цифры и подчеркивания';
+  const validateUsername = (username: string): string => {
+    if (!username) return 'Логин обязателен';
+    if (username.length < 3) return 'Логин должен содержать минимум 3 символа';
+    if (username.length > 20) return 'Логин не должен превышать 20 символов';
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) return 'Логин может содержать только буквы, цифры и подчеркивания';
     return '';
   };
   
@@ -238,8 +239,8 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
   // Валидация всей формы
   const validateForm = (): boolean => {
     const newErrors = {
-      email: mode === 'register' ? validateEmailField(formData.email) : validateEmail(formData.email),
-      username: mode === 'register' ? validateEmail(formData.username) : '',
+      email: mode === 'register' ? validateEmailField(formData.email) : validateUsername(formData.email),
+      username: mode === 'register' ? validateUsername(formData.username) : '',
       password: mode !== 'forgot' ? validatePassword(formData.password) : '',
       confirmPassword: mode === 'register' ? validateConfirmPassword(formData.confirmPassword, formData.password) : '',
       name: ''
