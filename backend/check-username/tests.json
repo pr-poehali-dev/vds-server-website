@@ -1,0 +1,37 @@
+{
+  "tests": [
+    {
+      "name": "Check available username",
+      "method": "GET",
+      "path": "/?username=testuser123",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "available": true,
+        "username": "testuser123"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Check username too short",
+      "method": "GET",
+      "path": "/?username=ab",
+      "expectedStatus": 400,
+      "expectedBody": {
+        "available": false,
+        "error": "Логин должен содержать минимум 3 символа"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Check username invalid format",
+      "method": "GET", 
+      "path": "/?username=user@invalid",
+      "expectedStatus": 400,
+      "expectedBody": {
+        "available": false,
+        "error": "Логин может содержать только буквы, цифры и подчеркивания"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

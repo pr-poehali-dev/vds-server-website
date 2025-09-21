@@ -34,6 +34,8 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [usernameCheckStatus, setUsernameCheckStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [usernameCheckDebounce, setUsernameCheckDebounce] = useState<NodeJS.Timeout | null>(null);
 
   // Загрузка сохранённых данных при открытии модалки
   useEffect(() => {
@@ -112,6 +114,42 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       confirmPassword: '',
       name: ''
     });
+  };
+
+  // Проверка уникальности логина
+  const checkUsernameAvailability = async (username: string) => {
+    if (mode !== 'register' || !username || username.length < 3) {
+      setUsernameCheckStatus('idle');
+      return;
+    }
+
+    setUsernameCheckStatus('checking');
+    
+    try {
+      // Временно используем mock проверку до исправления backend функции
+      await new Promise(resolve => setTimeout(resolve, 500)); // имитация задержки
+      
+      // Mock логика: считаем что "admin", "test", "user" заняты
+      const takenUsernames = ['admin', 'test', 'user', 'administrator'];
+      const available = !takenUsernames.includes(username.toLowerCase());
+      
+      setUsernameCheckStatus(available ? 'available' : 'taken');
+      
+      if (!available) {
+        setErrors(prev => ({
+          ...prev,
+          email: 'Этот логин уже занят'
+        }));
+      } else {
+        setErrors(prev => ({
+          ...prev,
+          email: ''
+        }));
+      }
+    } catch (error) {
+      console.error('Error checking username:', error);
+      setUsernameCheckStatus('idle');
+    }
   };
 
   // Валидация логина
@@ -245,6 +283,21 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     if (name === 'password' && mode === 'register') {
       checkPasswordStrength(value);
     }
+    
+    // Проверяем уникальность логина с debounce
+    if (name === 'email' && mode === 'register') {
+      // Очищаем предыдущий таймер
+      if (usernameCheckDebounce) {
+        clearTimeout(usernameCheckDebounce);
+      }
+      
+      // Устанавливаем новый таймер для проверки
+      const newDebounce = setTimeout(() => {
+        checkUsernameAvailability(value);
+      }, 500);
+      
+      setUsernameCheckDebounce(newDebounce);
+    }
   };
 
   return (
@@ -308,6 +361,31 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
                 autoComplete="username"
                 required
               />
+              
+              {/* Индикатор проверки уникальности логина */}
+              {mode === 'register' && formData.email.length >= 3 && (
+                <div className="mt-1">
+                  {usernameCheckStatus === 'checking' && (
+                    <p className="text-blue-500 text-sm flex items-center">
+                      <Icon name="Loader" size={14} className="mr-1 animate-spin" />
+                      Проверяем доступность логина...
+                    </p>
+                  )}
+                  {usernameCheckStatus === 'available' && (
+                    <p className="text-green-500 text-sm flex items-center">
+                      <Icon name="CheckCircle" size={14} className="mr-1" />
+                      Логин доступен
+                    </p>
+                  )}
+                  {usernameCheckStatus === 'taken' && (
+                    <p className="text-red-500 text-sm flex items-center">
+                      <Icon name="XCircle" size={14} className="mr-1" />
+                      Логин уже занят
+                    </p>
+                  )}
+                </div>
+              )}
+              
               {errors.email && (
                 <p className="text-red-500 text-sm mt-1 flex items-center">
                   <Icon name="AlertCircle" size={14} className="mr-1" />
