@@ -3,6 +3,24 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
 
+// Импорт компонентов
+import AuthHeader from '@/components/auth/AuthHeader';
+import AuthFormFields from '@/components/auth/AuthFormFields';
+import AuthNavigation from '@/components/auth/AuthNavigation';
+
+// Импорт функций
+import { 
+  validateForm, 
+  checkPasswordStrength, 
+  validateEmailField, 
+  validateUsername 
+} from '@/components/auth/AuthValidation';
+import { 
+  handleLogin, 
+  handleRegistration, 
+  checkUsernameAvailability 
+} from '@/components/auth/AuthAPI';
+
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -124,279 +142,14 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     });
   };
 
-  // Проверка уникальности логина
-  const checkUsernameAvailability = async (username: string) => {
-    if (mode !== 'register' || !username || username.length < 3) {
-      setUsernameCheckStatus('idle');
-      return;
-    }
-
-    setUsernameCheckStatus('checking');
-    
-    try {
-      // Временно используем mock проверку до исправления backend функции
-      await new Promise(resolve => setTimeout(resolve, 500)); // имитация задержки
-      
-      // Mock логика: считаем что "admin", "test", "user" заняты
-      const takenUsernames = ['admin', 'test', 'user', 'administrator'];
-      const available = !takenUsernames.includes(username.toLowerCase());
-      
-      setUsernameCheckStatus(available ? 'available' : 'taken');
-      
-      if (!available) {
-        setErrors(prev => ({
-          ...prev,
-          username: 'Этот логин уже занят'
-        }));
-      } else {
-        setErrors(prev => ({
-          ...prev,
-          username: ''
-        }));
-      }
-    } catch (error) {
-      console.error('Error checking username:', error);
-      setUsernameCheckStatus('idle');
-    }
-  };
-
-  // Валидация логина
-  const validateUsername = (username: string): string => {
-    if (!username) return 'Логин обязателен';
-    if (username.length < 3) return 'Логин должен содержать минимум 3 символа';
-    if (username.length > 20) return 'Логин не должен превышать 20 символов';
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) return 'Логин может содержать только буквы, цифры и подчеркивания';
-    return '';
-  };
-  
-  // Валидация email в поле регистрации
-  const validateEmailField = (email: string): string => {
-    if (!email.trim()) return 'E-mail обязателен';
-    
-    // Проверка формата email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) return 'Неверный формат e-mail (example@mail.com)';
-    
-    // Дополнительные проверки
-    if (email.length > 50) return 'E-mail не должен превышать 50 символов';
-    
-    return '';
-  };
-  
-  // Проверка силы пароля
-  const checkPasswordStrength = (password: string) => {
-    let score = 0;
-    let feedback = '';
-    let color = 'text-red-500';
-    
-    if (password.length >= 8) score += 1;
-    if (/[a-z]/.test(password)) score += 1;
-    if (/[A-Z]/.test(password)) score += 1;
-    if (/[0-9]/.test(password)) score += 1;
-    if (/[^A-Za-z0-9]/.test(password)) score += 1;
-    
-    switch (score) {
-      case 0:
-      case 1:
-        feedback = 'Слабый пароль';
-        color = 'text-red-500';
-        break;
-      case 2:
-      case 3:
-        feedback = 'Средний пароль';
-        color = 'text-yellow-500';
-        break;
-      case 4:
-        feedback = 'Хороший пароль';
-        color = 'text-blue-500';
-        break;
-      case 5:
-        feedback = 'Отличный пароль';
-        color = 'text-green-500';
-        break;
-    }
-    
-    setPasswordStrength({ score, feedback, color });
-  };
-  
-  // Валидация пароля
-  const validatePassword = (password: string): string => {
-    if (!password) return 'Пароль обязателен';
-    if (password.length < 8) return 'Пароль должен содержать минимум 8 символов';
-    if (!/[a-z]/.test(password)) return 'Пароль должен содержать строчные буквы';
-    if (!/[A-Z]/.test(password)) return 'Пароль должен содержать заглавные буквы';
-    if (!/[0-9]/.test(password)) return 'Пароль должен содержать цифры';
-    return '';
-  };
-  
-  // Валидация подтверждения пароля
-  const validateConfirmPassword = (confirmPassword: string, password: string): string => {
-    if (!confirmPassword) return 'Подтверждение пароля обязательно';
-    if (confirmPassword !== password) return 'Пароли не совпадают';
-    return '';
-  };
-  
-  // Валидация всей формы
-  const validateForm = (): boolean => {
-    const newErrors = {
-      email: mode === 'register' ? validateEmailField(formData.email) : validateUsername(formData.email),
-      username: mode === 'register' ? validateUsername(formData.username) : '',
-      password: mode !== 'forgot' ? validatePassword(formData.password) : '',
-      confirmPassword: mode === 'register' ? validateConfirmPassword(formData.confirmPassword, formData.password) : '',
-      name: ''
-    };
-    
-    setErrors(newErrors);
-    return !Object.values(newErrors).some(error => error !== '');
-  };
-
-  // Обработка регистрации пользователя
-  const handleLogin = async () => {
-    try {
-      // Инициализация подтвержденных тестовых пользователей (только при первом запуске)
-      const confirmedUsers = JSON.parse(localStorage.getItem('confirmedUsers') || '[]');
-      if (confirmedUsers.length === 0) {
-        const initialUsers = [
-          { email: 'test@example.com', password: 'testpassword', name: 'Тестовый пользователь', confirmedAt: Date.now() },
-          { email: 'admin@example.com', password: 'admin123', name: 'Администратор', confirmedAt: Date.now() }
-        ];
-        localStorage.setItem('confirmedUsers', JSON.stringify(initialUsers));
-      }
-
-      // Временная mock-авторизация с тестовыми пользователями
-      const testUsers = JSON.parse(localStorage.getItem('confirmedUsers') || '[]');
-
-      // Ищем пользователя
-      const foundUser = testUsers.find(user => 
-        user.email === formData.email && user.password === formData.password
-      );
-
-      if (foundUser) {
-        // Проверяем подтверждение email
-        const confirmedUsers = JSON.parse(localStorage.getItem('confirmedUsers') || '[]');
-        const isEmailConfirmed = confirmedUsers.some((user: any) => user.email === foundUser.email);
-        
-        if (!isEmailConfirmed) {
-          setErrors(prev => ({
-            ...prev,
-            email: 'Email не подтвержден. Проверьте почту и перейдите по ссылке из письма.'
-          }));
-          return;
-        }
-        
-        // Авторизация успешна
-        const user = {
-          email: foundUser.email,
-          name: foundUser.name
-        };
-        
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        
-        if (onAuthSuccess) {
-          onAuthSuccess(user);
-        }
-        
-        alert('Вход выполнен успешно!');
-        onClose();
-      } else {
-        // Неверные данные
-        setErrors(prev => ({
-          ...prev,
-          email: 'Неверный логин или пароль'
-        }));
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      setErrors(prev => ({
-        ...prev,
-        email: 'Ошибка сети. Попробуйте позже.'
-      }));
-    }
-  };
-
-  // Функция отправки email для подтверждения
-  const sendVerificationEmail = async (email: string, name: string) => {
-    try {
-      // Mock отправка email - в реальности здесь будет вызов backend функции
-      console.log(`Отправка email подтверждения для ${email}`);
-      
-      // Генерируем токен (в реальности это делается на backend)
-      const verificationToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
-      
-      // Сохраняем информацию о неподтвержденном пользователе
-      const pendingUsers = JSON.parse(localStorage.getItem('pendingUsers') || '[]');
-      pendingUsers.push({
-        email: formData.email,
-        name: formData.name,
-        password: formData.password, // В реальности пароль хешируется на backend
-        token: verificationToken,
-        timestamp: Date.now()
-      });
-      localStorage.setItem('pendingUsers', JSON.stringify(pendingUsers));
-      
-      // В реальности здесь отправка через backend API
-      /*
-      const response = await fetch('https://functions.poehali.dev/email-verify-url', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name })
-      });
-      */
-      
-      console.log(`Токен подтверждения: ${verificationToken}`);
-      console.log(`Ссылка: ${window.location.origin}/verify-email?token=${verificationToken}&email=${email}`);
-      
-    } catch (error) {
-      console.error('Ошибка отправки email:', error);
-      throw error;
-    }
-  };
-
-  const handleRegistration = async () => {
-    try {
-      const response = await fetch('https://functions.poehali.dev/2c530527-bc67-4b37-949a-334155677b68', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        })
-      });
-
-      const result = await response.json();
-      
-      if (response.ok && result.success) {
-        // Успешная регистрация - отправляем email для подтверждения
-        await sendVerificationEmail(formData.email, formData.name);
-        
-        alert('Регистрация выполнена! Проверьте ваш email и перейдите по ссылке для подтверждения аккаунта.');
-        
-        // Переключаемся на форму входа
-        setMode('login');
-        clearForm();
-      } else {
-        // Ошибка регистрации
-        const errorMessage = result.error || 'Ошибка при регистрации';
-        setErrors(prev => ({
-          ...prev,
-          email: errorMessage
-        }));
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
-      setErrors(prev => ({
-        ...prev,
-        email: 'Ошибка сети. Попробуйте позже.'
-      }));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    const validationErrors = validateForm(mode, formData);
+    setErrors(validationErrors);
+    
+    const isValid = !Object.values(validationErrors).some(error => error !== '');
+    if (!isValid) {
       return;
     }
     
@@ -415,10 +168,19 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       alert('Ссылка для восстановления пароля отправлена на ваш email!');
     } else if (mode === 'register') {
       // Регистрация нового пользователя
-      await handleRegistration();
+      const result = await handleRegistration(formData, setErrors);
+      if (result.success) {
+        alert('Регистрация выполнена! Проверьте ваш email и перейдите по ссылке для подтверждения аккаунта.');
+        setMode('login');
+        clearForm();
+      }
     } else {
       // Авторизация через API
-      await handleLogin();
+      const result = await handleLogin(formData, setErrors, onAuthSuccess);
+      if (result.success) {
+        alert('Вход выполнен успешно!');
+        onClose();
+      }
     }
   };
 
@@ -449,7 +211,8 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     
     // Проверяем силу пароля в реальном времени
     if (name === 'password' && mode === 'register') {
-      checkPasswordStrength(value);
+      const strength = checkPasswordStrength(value);
+      setPasswordStrength(strength);
     }
     
     // Проверяем уникальность логина с debounce
@@ -461,11 +224,15 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       
       // Устанавливаем новый таймер для проверки
       const newDebounce = setTimeout(() => {
-        checkUsernameAvailability(value);
+        checkUsernameAvailability(value, mode, setUsernameCheckStatus, setErrors);
       }, 500);
       
       setUsernameCheckDebounce(newDebounce);
     }
+  };
+
+  const handleRememberMeChange = (checked: boolean) => {
+    setFormData(prev => ({ ...prev, rememberMe: checked }));
   };
 
   return (
@@ -474,225 +241,24 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
         <DialogTitle className="sr-only">
           {mode === 'login' ? 'Вход в систему' : mode === 'register' ? 'Регистрация' : 'Восстановление пароля'}
         </DialogTitle>
-        <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold">
-            {mode === 'login' ? 'Вход в систему' : mode === 'register' ? 'Регистрация' : 'Восстановление пароля'}
-          </h2>
-          <p className="text-muted-foreground mt-2">
-            {mode === 'login' 
-              ? 'Войдите в свой аккаунт для управления серверами' 
-              : mode === 'register' 
-                ? 'Создайте аккаунт для заказа VDS серверов'
-                : 'Введите логин для восстановления доступа'
-            }
-          </p>
-        </div>
+        
+        <AuthHeader mode={mode} />
         
         <div>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {mode === 'register' && (
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  E-mail
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
-                    errors.email ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
-                  }`}
-                  placeholder="Введите ваш e-mail"
-                  autoComplete="email"
-                  required
-                />
-                
-                {/* Индикация валидности email */}
-                {mode === 'register' && formData.email.length > 0 && (
-                  <div className="mt-1">
-                    {errors.email ? (
-                      <p className="text-red-500 text-sm flex items-center">
-                        <Icon name="XCircle" size={14} className="mr-1" />
-                        {errors.email}
-                      </p>
-                    ) : (
-                      <p className="text-green-500 text-sm flex items-center">
-                        <Icon name="CheckCircle" size={14} className="mr-1" />
-                        Правильный формат e-mail
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-            
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Логин
-              </label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleInputChange}
-                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
-                  errors.username ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
-                }`}
-                placeholder="Введите ваш логин"
-                autoComplete="username"
-                required
-              />
-              
-              {/* Индикатор проверки уникальности логина */}
-              {mode === 'register' && formData.username.length >= 3 && (
-                <div className="mt-1">
-                  {usernameCheckStatus === 'checking' && (
-                    <p className="text-blue-500 text-sm flex items-center">
-                      <Icon name="Loader" size={14} className="mr-1 animate-spin" />
-                      Проверяем доступность логина...
-                    </p>
-                  )}
-                  {usernameCheckStatus === 'available' && (
-                    <p className="text-green-500 text-sm flex items-center">
-                      <Icon name="CheckCircle" size={14} className="mr-1" />
-                      Логин доступен
-                    </p>
-                  )}
-                  {usernameCheckStatus === 'taken' && (
-                    <p className="text-red-500 text-sm flex items-center">
-                      <Icon name="XCircle" size={14} className="mr-1" />
-                      Логин уже занят
-                    </p>
-                  )}
-                </div>
-              )}
-              
-              {errors.username && (
-                <p className="text-red-500 text-sm mt-1 flex items-center">
-                  <Icon name="AlertCircle" size={14} className="mr-1" />
-                  {errors.username}
-                </p>
-              )}
-            </div>
-            
-            {mode !== 'forgot' && (
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Пароль
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className={`w-full p-3 pr-12 border rounded-lg focus:outline-none focus:ring-2 ${
-                      errors.password ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
-                    }`}
-                    placeholder="Введите пароль"
-                    autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-100"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    <Icon name={showPassword ? "EyeOff" : "Eye"} size={16} className="text-gray-500" />
-                  </Button>
-                </div>
-                {errors.password && (
-                  <p className="text-red-500 text-sm mt-1 flex items-center">
-                    <Icon name="AlertCircle" size={14} className="mr-1" />
-                    {errors.password}
-                  </p>
-                )}
-                {mode === 'register' && formData.password && (
-                  <div className="mt-2">
-                    <div className="flex items-center space-x-2">
-                      <div className="flex-1 bg-gray-200 rounded-full h-2">
-                        <div 
-                          className={`h-2 rounded-full transition-all duration-300 ${
-                            passwordStrength.score <= 2 ? 'bg-red-500' : 
-                            passwordStrength.score === 3 ? 'bg-yellow-500' : 
-                            passwordStrength.score === 4 ? 'bg-blue-500' : 'bg-green-500'
-                          }`}
-                          style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
-                        />
-                      </div>
-                      <span className={`text-sm font-medium ${passwordStrength.color}`}>
-                        {passwordStrength.feedback}
-                      </span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Используйте: строчные и заглавные буквы, цифры, спецсимволы
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-            
-            {mode === 'register' && (
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Подтвердите пароль
-                </label>
-                <div className="relative">
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    className={`w-full p-3 pr-12 border rounded-lg focus:outline-none focus:ring-2 ${
-                      errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
-                    }`}
-                    placeholder="Повторите пароль"
-                    autoComplete="new-password"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-100"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    <Icon name={showConfirmPassword ? "EyeOff" : "Eye"} size={16} className="text-gray-500" />
-                  </Button>
-                </div>
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm mt-1 flex items-center">
-                    <Icon name="AlertCircle" size={14} className="mr-1" />
-                    {errors.confirmPassword}
-                  </p>
-                )}
-                {formData.confirmPassword && !errors.confirmPassword && formData.password === formData.confirmPassword && (
-                  <p className="text-green-500 text-sm mt-1 flex items-center">
-                    <Icon name="CheckCircle" size={14} className="mr-1" />
-                    Пароли совпадают
-                  </p>
-                )}
-              </div>
-            )}
-            
-            {/* Чекбокс "Запомнить меня" для входа и регистрации */}
-            {mode !== 'forgot' && (
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="rememberMe"
-                  checked={formData.rememberMe}
-                  onChange={(e) => setFormData(prev => ({ ...prev, rememberMe: e.target.checked }))}
-                  className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2"
-                />
-                <label htmlFor="rememberMe" className="text-sm text-foreground select-none cursor-pointer">
-                  Запомнить меня
-                </label>
-              </div>
-            )}
+            <AuthFormFields
+              mode={mode}
+              formData={formData}
+              errors={errors}
+              showPassword={showPassword}
+              showConfirmPassword={showConfirmPassword}
+              usernameCheckStatus={usernameCheckStatus}
+              passwordStrength={passwordStrength}
+              onInputChange={handleInputChange}
+              onPasswordToggle={() => setShowPassword(!showPassword)}
+              onConfirmPasswordToggle={() => setShowConfirmPassword(!showConfirmPassword)}
+              onRememberMeChange={handleRememberMeChange}
+            />
             
             <Button 
               type="submit"
@@ -703,42 +269,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
             </Button>
           </form>
           
-          {mode === 'login' && (
-            <div className="mt-4 text-center">
-              <Button
-                variant="link"
-                onClick={() => handleModeChange('forgot')}
-                className="p-0 text-muted-foreground text-sm"
-              >
-                Забыли пароль?
-              </Button>
-            </div>
-          )}
-          
-          <div className="mt-6 text-center">
-            {mode === 'forgot' ? (
-              <Button
-                variant="link"
-                onClick={() => handleModeChange('login')}
-                className="p-0 text-primary"
-              >
-                ← Вернуться к входу
-              </Button>
-            ) : (
-              <>
-                <p className="text-muted-foreground">
-                  {mode === 'login' ? 'Нет аккаунта?' : 'Уже есть аккаунт?'}
-                </p>
-                <Button
-                  variant="link"
-                  onClick={() => handleModeChange(mode === 'login' ? 'register' : 'login')}
-                  className="p-0 text-primary"
-                >
-                  {mode === 'login' ? 'Зарегистрироваться' : 'Войти'}
-                </Button>
-              </>
-            )}
-          </div>
+          <AuthNavigation mode={mode} onModeChange={handleModeChange} />
         </div>
       </DialogContent>
     </Dialog>
