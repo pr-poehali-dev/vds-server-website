@@ -4,6 +4,36 @@ import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 
 const Plans = () => {
+  const handleSelectPlan = (plan: any) => {
+    // Создаем форму для оплаты
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://payment.yandex.net/api/v3/payment';
+    form.target = '_blank';
+    
+    // Добавляем поля формы
+    const fields = {
+      shop_id: '12345', // ID магазина в Яндекс.Кассе
+      amount: plan.price.replace('₽', ''),
+      currency: 'RUB',
+      description: `Оплата тарифа ${plan.name}`,
+      return_url: window.location.origin + '/success',
+      cancel_url: window.location.origin + '/cancel'
+    };
+    
+    Object.entries(fields).forEach(([key, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = value;
+      form.appendChild(input);
+    });
+    
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+  };
+
   const plans = [
     {
       name: 'Basic',
@@ -89,6 +119,7 @@ const Plans = () => {
                     : ''
                 }`}
                 variant={plan.popular ? 'default' : 'outline'}
+                onClick={() => handleSelectPlan(plan)}
               >
                 Выбрать план
               </Button>
