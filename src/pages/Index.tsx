@@ -12,7 +12,16 @@ const Index = () => {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    // Проверяем URL-параметры для автоматического открытия модального окна
+    // Проверяем, авторизован ли пользователь
+    const userData = localStorage.getItem('currentUser');
+    const isLoggedIn = userData !== null;
+    
+    // Если пользователь уже авторизован, не показываем форму авторизации
+    if (isLoggedIn) {
+      return;
+    }
+    
+    // Проверяем URL-параметры для автоматического открытия модального окна только для неавторизованных пользователей
     const login = searchParams.get('login');
     const register = searchParams.get('register');
     
