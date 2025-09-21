@@ -182,9 +182,12 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     } else {
       // Авторизация через API
       const result = await handleLogin(formData, setErrors, onAuthSuccess);
+      console.log('📊 РЕЗУЛЬТАТ ВХОДА:', result);
       if (result.success) {
         alert('Вход выполнен успешно!');
         onClose();
+      } else {
+        console.log('❌ ВХОД НЕ УДАЛСЯ, errors состояние должно обновиться');
       }
     }
   };

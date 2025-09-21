@@ -65,22 +65,18 @@ const AuthFormFields = ({
             required
           />
           
-          {/* Индикация валидности email */}
-          {formData.email.length > 0 && (
-            <div className="mt-1">
-              {errors.email ? (
-                <p className="text-red-500 text-sm flex items-center">
-                  <Icon name="XCircle" size={14} className="mr-1" />
-                  {errors.email}
-                </p>
-              ) : (
-                <p className="text-green-500 text-sm flex items-center">
-                  <Icon name="CheckCircle" size={14} className="mr-1" />
-                  Правильный формат e-mail
-                </p>
-              )}
-            </div>
-          )}
+          {/* Показываем ошибки всегда, валидацию только при вводе */}
+          {errors.email ? (
+            <p className="text-red-500 text-sm mt-1 flex items-center">
+              <Icon name="XCircle" size={14} className="mr-1" />
+              {errors.email}
+            </p>
+          ) : mode === 'register' && formData.email.length > 0 ? (
+            <p className="text-green-500 text-sm mt-1 flex items-center">
+              <Icon name="CheckCircle" size={14} className="mr-1" />
+              Правильный формат e-mail
+            </p>
+          ) : null}
         </div>
       )}
       
