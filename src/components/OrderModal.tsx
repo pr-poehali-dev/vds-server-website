@@ -50,15 +50,8 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={onClose}
-            className="absolute right-4 top-4"
-          >
-            <Icon name="X" size={16} />
-          </Button>
+        <DialogHeader className="sr-only">
+          <span>Заказ сервера</span>
         </DialogHeader>
         
         <div className="p-6">
