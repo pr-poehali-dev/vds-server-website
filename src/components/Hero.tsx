@@ -1,6 +1,6 @@
 const Hero = () => {
   return (
-    <section className="animate-fade-in">
+    <section className="animate-fade-in pt-6">
       {/* Hero Image */}
       <div className="relative w-full">
         <img 
