@@ -64,10 +64,10 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
                   <Icon name="Server" size={24} className="text-green-600" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold">VDS {plan.name} 10.0</h1>
+                  <h1 className="text-2xl font-bold">{plan.name}</h1>
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">🇷🇺</span>
-                    <span className="text-gray-600">Москва</span>
+                    <div className="w-4 h-4 rounded-full bg-gradient-to-b from-white via-blue-500 to-red-500 border border-gray-300"></div>
+                    <span className="text-gray-600">Смоленск</span>
                   </div>
                 </div>
                 <div className="ml-auto text-right text-gray-500 text-sm">
