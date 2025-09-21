@@ -6,9 +6,10 @@ import Icon from '@/components/ui/icon';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onAuthSuccess?: (user: { email: string; name: string }) => void;
 }
 
-const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
+const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
   const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
   const [formData, setFormData] = useState({
     email: '',
@@ -207,6 +208,16 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       alert('Ссылка для восстановления пароля отправлена на ваш email!');
     } else {
       // Логика авторизации/регистрации
+      const user = { 
+        email: formData.email, 
+        name: formData.name || 'Пользователь' 
+      };
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      if (onAuthSuccess) {
+        onAuthSuccess(user);
+      }
+      
       console.log('Auth data:', formData);
       alert(`${mode === 'login' ? 'Вход' : 'Регистрация'} выполнен успешно!`);
     }

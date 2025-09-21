@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
 import toast from 'react-hot-toast';
+import AuthModal from './AuthModal';
 
 interface OrderModalProps {
   isOpen: boolean;
@@ -23,6 +24,8 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
   const [selectedPeriod, setSelectedPeriod] = useState("3");
   const [quantity, setQuantity] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ email: string; name: string } | null>(null);
   
   if (!plan) return null;
   
@@ -47,7 +50,28 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
     nvme: plan.features[2]?.split(' ')[0] || '20'
   };
 
+  const checkUserAuth = () => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        setCurrentUser(user);
+        return true;
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        localStorage.removeItem('user');
+      }
+    }
+    return false;
+  };
+
   const handlePayment = async () => {
+    // Проверяем авторизацию перед оплатой
+    if (!checkUserAuth()) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+
     setIsProcessing(true);
     
     try {
@@ -55,7 +79,8 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
         amount: totalPrice,
         planName: plan.name,
         quantity: quantity,
-        period: selectedPeriod
+        period: selectedPeriod,
+        userEmail: currentUser?.email
       };
 
       const response = await fetch('https://functions.poehali.dev/4d04c70a-4ea3-4f73-a267-f1c35a8e3b47', {
@@ -94,6 +119,15 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const handleAuthSuccess = (user: { email: string; name: string }) => {
+    setCurrentUser(user);
+    setIsAuthModalOpen(false);
+    // После успешной авторизации автоматически переходим к оплате
+    setTimeout(() => {
+      handlePayment();
+    }, 500);
   };
 
   return (
@@ -237,6 +271,12 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
           </div>
         </div>
       </DialogContent>
+      
+      <AuthModal 
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
+      />
     </Dialog>
   );
 };
