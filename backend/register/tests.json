@@ -5,30 +5,28 @@
       "method": "POST",
       "path": "/",
       "body": {
-        "username": "newuser123",
-        "name": "Новый Пользователь",
+        "email": "newuser@example.com",
         "password": "SecurePass123!"
       },
       "expectedStatus": 200,
       "expectedBody": {
         "success": true,
-        "message": "Пользователь успешно зарегистрирован"
+        "message": "Регистрация прошла успешно! Проверьте email для подтверждения."
       },
       "bodyMatcher": "partial"
     },
     {
-      "name": "Register with taken username",
+      "name": "Register with taken email",
       "method": "POST", 
       "path": "/",
       "body": {
-        "username": "admin",
-        "name": "Admin User",
+        "email": "admin@example.com",
         "password": "SecurePass123!"
       },
       "expectedStatus": 400,
       "expectedBody": {
         "success": false,
-        "error": "Этот логин уже занят"
+        "error": "Пользователь с таким email уже существует"
       },
       "bodyMatcher": "partial"
     },
@@ -37,8 +35,7 @@
       "method": "POST",
       "path": "/",
       "body": {
-        "username": "testuser",
-        "name": "Test User", 
+        "email": "testuser@example.com",
         "password": "123"
       },
       "expectedStatus": 400,

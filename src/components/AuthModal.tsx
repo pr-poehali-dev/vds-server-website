@@ -352,8 +352,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username: formData.email,
-          name: formData.name,
+          email: formData.email,
           password: formData.password
         })
       });
