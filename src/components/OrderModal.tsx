@@ -89,7 +89,7 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
                 
                 <div className="relative inline-block">
                   <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                    <SelectTrigger className="w-full max-w-xs">
+                    <SelectTrigger className="w-full max-w-xs focus:ring-0 focus:ring-offset-0 focus:outline-none border-gray-300">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
