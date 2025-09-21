@@ -13,6 +13,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
   const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
   const [formData, setFormData] = useState({
     email: '',
+    username: '',
     password: '',
     confirmPassword: '',
     name: '',
@@ -21,6 +22,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
   
   const [errors, setErrors] = useState({
     email: '',
+    username: '',
     password: '',
     confirmPassword: '',
     name: ''
@@ -49,6 +51,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
           setFormData(prev => ({
             ...prev,
             email: parsedData.email || '',
+            username: parsedData.username || '',
             name: parsedData.name || '',
             rememberMe: true
             // Пароли НЕ загружаем из соображений безопасности
@@ -62,9 +65,10 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
 
   // Сохранение данных при изменении
   useEffect(() => {
-    if (formData.rememberMe && (formData.email || formData.name)) {
+    if (formData.rememberMe && (formData.email || formData.username || formData.name)) {
       const dataToSave = {
         email: formData.email,
+        username: formData.username,
         name: formData.name
         // Пароли НЕ сохраняем из соображений безопасности
       };
@@ -74,12 +78,13 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       localStorage.removeItem('authFormData');
       localStorage.removeItem('rememberMe');
     }
-  }, [formData.email, formData.name, formData.rememberMe]);
+  }, [formData.email, formData.username, formData.name, formData.rememberMe]);
 
   // Функция очистки формы (кроме сохранённых данных)
   const clearForm = () => {
     setFormData(prev => ({
       email: prev.rememberMe ? prev.email : '',
+      username: prev.rememberMe ? prev.username : '',
       name: prev.rememberMe ? prev.name : '',
       password: '',
       confirmPassword: '',
@@ -87,6 +92,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     }));
     setErrors({
       email: '',
+      username: '',
       password: '',
       confirmPassword: '',
       name: ''
@@ -445,7 +451,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     }
     
     // Проверяем уникальность логина с debounce
-    if (name === 'email' && mode === 'register') {
+    if (name === 'username' && mode === 'register') {
       // Очищаем предыдущий таймер
       if (usernameCheckDebounce) {
         clearTimeout(usernameCheckDebounce);
@@ -525,11 +531,11 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
               </label>
               <input
                 type="text"
-                name="email"
-                value={formData.email}
+                name="username"
+                value={formData.username}
                 onChange={handleInputChange}
                 className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
-                  errors.email ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
+                  errors.username ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
                 }`}
                 placeholder="Введите ваш логин"
                 autoComplete="username"
@@ -537,7 +543,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
               />
               
               {/* Индикатор проверки уникальности логина */}
-              {mode === 'register' && formData.email.length >= 3 && (
+              {mode === 'register' && formData.username.length >= 3 && (
                 <div className="mt-1">
                   {usernameCheckStatus === 'checking' && (
                     <p className="text-blue-500 text-sm flex items-center">
