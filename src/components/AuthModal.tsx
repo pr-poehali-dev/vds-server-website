@@ -148,9 +148,12 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     
     const validationErrors = validateForm(mode, formData);
     setErrors(validationErrors);
+    console.log('📝 ВАЛИДАЦИЯ:', validationErrors);
     
     const isValid = !Object.values(validationErrors).some(error => error !== '');
+    console.log('✔️ ВАЛИДНАЯ ФОРМА:', isValid);
     if (!isValid) {
+      console.log('❌ ФОРМА НЕ ПРОШЛА ВАЛИДАЦИЮ, останавливаемся');
       return;
     }
     
