@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
 
 interface AuthModalProps {
@@ -246,43 +246,24 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div 
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm"
-      onClick={onClose}
-    >      
-      {/* Modal */}
-      <Card 
-        className="relative w-full max-w-md mx-4 shadow-2xl animate-scale-in"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <CardHeader className="text-center">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl">
-              {mode === 'login' ? 'Вход в систему' : mode === 'register' ? 'Регистрация' : 'Восстановление пароля'}
-            </CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="p-2"
-            >
-              <Icon name="X" size={20} />
-            </Button>
-          </div>
-          <CardDescription>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="w-full max-w-md shadow-2xl" style={{ zIndex: 60 }}>
+        <div className="text-center mb-4">
+          <h2 className="text-2xl font-bold">
+            {mode === 'login' ? 'Вход в систему' : mode === 'register' ? 'Регистрация' : 'Восстановление пароля'}
+          </h2>
+          <p className="text-muted-foreground mt-2">
             {mode === 'login' 
               ? 'Войдите в свой аккаунт для управления серверами' 
               : mode === 'register' 
                 ? 'Создайте аккаунт для заказа VDS серверов'
                 : 'Введите email для получения ссылки восстановления'
             }
-          </CardDescription>
-        </CardHeader>
+          </p>
+        </div>
         
-        <CardContent>
+        <div>
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === 'register' && (
               <div>
@@ -497,9 +478,9 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
               </>
             )}
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
