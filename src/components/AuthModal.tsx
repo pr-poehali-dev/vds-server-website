@@ -423,7 +423,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     });
     
     // Валидация email в реальном времени для поля регистрации
-    if (name === 'name' && mode === 'register') {
+    if (name === 'email' && mode === 'register') {
       const emailError = validateEmailField(value);
       setErrors({
         ...errors,
@@ -489,11 +489,11 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
                 </label>
                 <input
                   type="email"
-                  name="name"
-                  value={formData.name}
+                  name="email"
+                  value={formData.email}
                   onChange={handleInputChange}
                   className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
-                    errors.name ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
+                    errors.email ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
                   }`}
                   placeholder="Введите ваш e-mail"
                   autoComplete="email"
@@ -501,12 +501,12 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
                 />
                 
                 {/* Индикация валидности email */}
-                {mode === 'register' && formData.name.length > 0 && (
+                {mode === 'register' && formData.email.length > 0 && (
                   <div className="mt-1">
-                    {errors.name ? (
+                    {errors.email ? (
                       <p className="text-red-500 text-sm flex items-center">
                         <Icon name="XCircle" size={14} className="mr-1" />
-                        {errors.name}
+                        {errors.email}
                       </p>
                     ) : (
                       <p className="text-green-500 text-sm flex items-center">
