@@ -147,7 +147,8 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
               {/* Price Summary */}
               <Card>
                 <CardContent className="p-6">
-                  <div className="text-right mb-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-lg font-medium">Итого</span>
                     <div className="text-3xl font-bold">{totalPrice}₽</div>
                   </div>
                   
