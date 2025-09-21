@@ -249,15 +249,15 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      
+    <div 
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      onClick={onClose}
+    >      
       {/* Modal */}
-      <Card className="relative w-full max-w-md mx-4 shadow-2xl animate-scale-in">
+      <Card 
+        className="relative w-full max-w-md mx-4 shadow-2xl animate-scale-in"
+        onClick={(e) => e.stopPropagation()}
+      >
         <CardHeader className="text-center">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl">
