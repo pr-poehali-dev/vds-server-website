@@ -162,10 +162,17 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     return '';
   };
   
-  // Валидация имени
-  const validateName = (name: string): string => {
-    if (!name.trim()) return 'Имя обязательно';
-    if (name.trim().length < 2) return 'Имя должно содержать минимум 2 символа';
+  // Валидация email в поле регистрации
+  const validateEmailField = (email: string): string => {
+    if (!email.trim()) return 'E-mail обязателен';
+    
+    // Проверка формата email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return 'Неверный формат e-mail (example@mail.com)';
+    
+    // Дополнительные проверки
+    if (email.length > 50) return 'E-mail не должен превышать 50 символов';
+    
     return '';
   };
   
@@ -228,7 +235,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       email: validateEmail(formData.email),
       password: mode !== 'forgot' ? validatePassword(formData.password) : '',
       confirmPassword: mode === 'register' ? validateConfirmPassword(formData.confirmPassword, formData.password) : '',
-      name: mode === 'register' ? validateName(formData.name) : ''
+      name: mode === 'register' ? validateEmailField(formData.name) : ''
     };
     
     setErrors(newErrors);
@@ -365,12 +372,21 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       [name]: value
     });
     
-    // Очищаем ошибку при вводе
-    if (errors[name as keyof typeof errors]) {
+    // Валидация email в реальном времени для поля регистрации
+    if (name === 'name' && mode === 'register') {
+      const emailError = validateEmailField(value);
       setErrors({
         ...errors,
-        [name]: ''
+        [name]: emailError
       });
+    } else {
+      // Очищаем ошибку при вводе для других полей
+      if (errors[name as keyof typeof errors]) {
+        setErrors({
+          ...errors,
+          [name]: ''
+        });
+      }
     }
     
     // Проверяем силу пароля в реальном времени
@@ -430,11 +446,22 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
                   autoComplete="email"
                   required
                 />
-                {errors.name && (
-                  <p className="text-red-500 text-sm mt-1 flex items-center">
-                    <Icon name="AlertCircle" size={14} className="mr-1" />
-                    {errors.name}
-                  </p>
+                
+                {/* Индикация валидности email */}
+                {mode === 'register' && formData.name.length > 0 && (
+                  <div className="mt-1">
+                    {errors.name ? (
+                      <p className="text-red-500 text-sm flex items-center">
+                        <Icon name="XCircle" size={14} className="mr-1" />
+                        {errors.name}
+                      </p>
+                    ) : (
+                      <p className="text-green-500 text-sm flex items-center">
+                        <Icon name="CheckCircle" size={14} className="mr-1" />
+                        Правильный формат e-mail
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
             )}
