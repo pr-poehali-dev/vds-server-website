@@ -15,7 +15,8 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     email: '',
     password: '',
     confirmPassword: '',
-    name: ''
+    name: '',
+    rememberMe: false
   });
   
   const [errors, setErrors] = useState({
@@ -33,7 +34,6 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
   
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [usernameCheckStatus, setUsernameCheckStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
   const [usernameCheckDebounce, setUsernameCheckDebounce] = useState<NodeJS.Timeout | null>(null);
 
@@ -49,10 +49,10 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
           setFormData(prev => ({
             ...prev,
             email: parsedData.email || '',
-            name: parsedData.name || ''
+            name: parsedData.name || '',
+            rememberMe: true
             // Пароли НЕ загружаем из соображений безопасности
           }));
-          setRememberMe(true);
         } catch (error) {
           console.log('Ошибка загрузки сохранённых данных:', error);
         }
@@ -62,7 +62,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
 
   // Сохранение данных при изменении
   useEffect(() => {
-    if (rememberMe && (formData.email || formData.name)) {
+    if (formData.rememberMe && (formData.email || formData.name)) {
       const dataToSave = {
         email: formData.email,
         name: formData.name
@@ -70,19 +70,20 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
       };
       localStorage.setItem('authFormData', JSON.stringify(dataToSave));
       localStorage.setItem('rememberMe', 'true');
-    } else if (!rememberMe) {
+    } else if (!formData.rememberMe) {
       localStorage.removeItem('authFormData');
       localStorage.removeItem('rememberMe');
     }
-  }, [formData.email, formData.name, rememberMe]);
+  }, [formData.email, formData.name, formData.rememberMe]);
 
   // Функция очистки формы (кроме сохранённых данных)
   const clearForm = () => {
     setFormData(prev => ({
-      email: rememberMe ? prev.email : '',
-      name: rememberMe ? prev.name : '',
+      email: prev.rememberMe ? prev.email : '',
+      name: prev.rememberMe ? prev.name : '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
+      rememberMe: prev.rememberMe
     }));
     setErrors({
       email: '',
@@ -253,7 +254,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
         // Авторизация успешна
         const user = {
           email: foundUser.email,
-          name: foundUser.name
+          name: foundUser.email // Используем email вместо имени
         };
         
         localStorage.setItem('currentUser', JSON.stringify(user));
@@ -595,8 +596,8 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
                 <input
                   type="checkbox"
                   id="rememberMe"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
+                  checked={formData.rememberMe}
+                  onChange={(e) => setFormData(prev => ({ ...prev, rememberMe: e.target.checked }))}
                   className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2"
                 />
                 <label htmlFor="rememberMe" className="text-sm text-foreground select-none cursor-pointer">
