@@ -20,7 +20,7 @@ const Plans = () => {
       price: '499₽',
       period: '/мес',
       description: 'Идеально для личных проектов',
-      features: ['1 vCPU', '1 GB RAM', '20 GB NVMe', '1 Гбит/с', '24/7 поддержка'],
+      features: ['1 CPU', '1 GB RAM', '20 GB NVMe', '1 Гбит/с', '24/7 поддержка'],
       popular: false
     },
     {
@@ -28,7 +28,7 @@ const Plans = () => {
       price: '999₽',
       period: '/мес',
       description: 'Для малого и среднего бизнеса',
-      features: ['2 vCPU', '4 GB RAM', '80 GB NVMe', '1 Гбит/с', '24/7 поддержка', 'Бесплатные бэкапы'],
+      features: ['2 CPU', '4 GB RAM', '80 GB NVMe', '1 Гбит/с', '24/7 поддержка', 'Бесплатные бэкапы'],
       popular: true
     },
     {
@@ -36,7 +36,7 @@ const Plans = () => {
       price: '1699₽',
       period: '/мес',
       description: 'Для растущего бизнеса',
-      features: ['4 vCPU', '8 GB RAM', '120 GB NVMe', '1 Гбит/с', '24/7 поддержка', 'Бесплатные бэкапы', 'SSL сертификат'],
+      features: ['4 CPU', '8 GB RAM', '120 GB NVMe', '1 Гбит/с', '24/7 поддержка', 'Бесплатные бэкапы', 'SSL сертификат'],
       popular: false
     },
     {
@@ -44,7 +44,7 @@ const Plans = () => {
       price: '2499₽',
       period: '/мес',
       description: 'Для крупных проектов',
-      features: ['8 vCPU', '16 GB RAM', '240 GB NVMe', '1 Гбит/с', '24/7 поддержка', 'Бесплатные бэкапы', 'Dedicated IP', 'Managed сервис'],
+      features: ['8 CPU', '16 GB RAM', '240 GB NVMe', '1 Гбит/с', '24/7 поддержка', 'Бесплатные бэкапы', 'Dedicated IP', 'Managed сервис'],
       popular: false
     }
   ];
