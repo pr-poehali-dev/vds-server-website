@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
 
@@ -22,7 +21,6 @@ interface OrderModalProps {
 const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
   const [selectedPeriod, setSelectedPeriod] = useState("3");
   const [quantity, setQuantity] = useState(1);
-  const [promoCode, setPromoCode] = useState("");
   
   if (!plan) return null;
   
@@ -167,21 +165,7 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
                     )}
                   </div>
 
-                  {/* Promo Code */}
-                  <div className="mt-6">
-                    <label className="block text-sm font-medium mb-2">ПРОМОКОД</label>
-                    <div className="flex gap-2">
-                      <Input 
-                        placeholder="XXXXXXXX"
-                        value={promoCode}
-                        onChange={(e) => setPromoCode(e.target.value)}
-                        className="flex-1"
-                      />
-                      <Button variant="outline" className="bg-green-500 text-white border-green-500 hover:bg-green-600">
-                        Применить
-                      </Button>
-                    </div>
-                  </div>
+
 
                   {/* Pay Button */}
                   <Button className="w-full mt-6 bg-green-500 hover:bg-green-600 text-white text-lg py-6">
@@ -190,10 +174,7 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
                 </CardContent>
               </Card>
 
-              {/* Итого Label */}
-              <div className="text-right">
-                <span className="text-lg font-medium">Итого</span>
-              </div>
+
             </div>
           </div>
         </div>
