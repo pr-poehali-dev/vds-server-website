@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster as HotToaster } from "react-hot-toast";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Order from "./pages/Order";
@@ -18,6 +19,16 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <HotToaster 
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+        }}
+      />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />

@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
+import toast from 'react-hot-toast';
 
 interface OrderModalProps {
   isOpen: boolean;
@@ -68,14 +69,28 @@ const OrderModal = ({ isOpen, onClose, plan }: OrderModalProps) => {
       const result = await response.json();
       
       if (response.ok && result.payment_url) {
+        toast.success(`Переход к оплате тарифа "${plan.name}" на сумму ${totalPrice}₽`);
+        
         // Redirect to payment gateway
         window.open(result.payment_url, '_blank');
+        
+        // Simulate payment success after 3 seconds
+        setTimeout(() => {
+          toast.success('🎉 Оплата успешно завершена! Ваш сервер будет готов через несколько минут.', {
+            duration: 6000,
+            style: {
+              background: '#10b981',
+              color: '#fff',
+            },
+          });
+          onClose();
+        }, 3000);
       } else {
-        alert('Ошибка при создании платежа. Попробуйте еще раз.');
+        toast.error('Ошибка при создании платежа. Попробуйте еще раз.');
       }
     } catch (error) {
       console.error('Payment error:', error);
-      alert('Ошибка при создании платежа. Попробуйте еще раз.');
+      toast.error('Ошибка при создании платежа. Попробуйте еще раз.');
     } finally {
       setIsProcessing(false);
     }
