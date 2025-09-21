@@ -39,7 +39,11 @@ export const sendVerificationEmail = async (email: string, name: string, formDat
 
 // Обработка регистрации пользователя
 export const handleLogin = async (formData: any, setErrors: any, onAuthSuccess?: (user: { email: string; name: string }) => void) => {
-  console.log('🔥 ВХОД: Начинаем процесс входа с данными:', { email: formData.email, hasPassword: !!formData.password });
+  console.log('🔥 ВХОД: Начинаем процесс входа с данными:', { 
+    email: formData.email, 
+    username: formData.username,
+    hasPassword: !!formData.password 
+  });
   try {
     // Инициализация подтвержденных тестовых пользователей (только при первом запуске)
     const dataVersion = localStorage.getItem('userDataVersion');
@@ -55,13 +59,22 @@ export const handleLogin = async (formData: any, setErrors: any, onAuthSuccess?:
 
     // Временная mock-авторизация с тестовыми пользователями
     const testUsers = JSON.parse(localStorage.getItem('confirmedUsers') || '[]');
+    console.log('👥 ДОСТУПНЫЕ ПОЛЬЗОВАТЕЛИ:', testUsers);
 
     // Ищем пользователя по email, логину и паролю
-    const foundUser = testUsers.find((user: any) => 
-      user.email === formData.email && 
-      user.username === formData.username && 
-      user.password === formData.password
-    );
+    const foundUser = testUsers.find((user: any) => {
+      const emailMatch = user.email === formData.email;
+      const usernameMatch = user.username === formData.username;
+      const passwordMatch = user.password === formData.password;
+      
+      console.log(`🔍 Проверяем пользователя ${user.email}:`, {
+        emailMatch: `${user.email} === ${formData.email} = ${emailMatch}`,
+        usernameMatch: `${user.username} === ${formData.username} = ${usernameMatch}`,
+        passwordMatch: `****** === ****** = ${passwordMatch}`
+      });
+      
+      return emailMatch && usernameMatch && passwordMatch;
+    });
 
     if (foundUser) {
       console.log('✅ ВХОД: Пользователь найден!', foundUser);
