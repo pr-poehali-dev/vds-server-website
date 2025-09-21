@@ -114,11 +114,12 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     });
   };
 
-  // Валидация email
+  // Валидация логина
   const validateEmail = (email: string): string => {
-    if (!email) return 'Email обязателен';
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) return 'Неверный формат email';
+    if (!email) return 'Логин обязателен';
+    if (email.length < 3) return 'Логин должен содержать минимум 3 символа';
+    if (email.length > 20) return 'Логин не должен превышать 20 символов';
+    if (!/^[a-zA-Z0-9_]+$/.test(email)) return 'Логин может содержать только буквы, цифры и подчеркивания';
     return '';
   };
   
@@ -258,7 +259,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
               ? 'Войдите в свой аккаунт для управления серверами' 
               : mode === 'register' 
                 ? 'Создайте аккаунт для заказа VDS серверов'
-                : 'Введите email для получения ссылки восстановления'
+                : 'Введите логин для восстановления доступа'
             }
           </p>
         </div>
@@ -293,18 +294,18 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
             
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Email
+                Логин
               </label>
               <input
-                type="email"
+                type="text"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
                   errors.email ? 'border-red-500 focus:ring-red-500' : 'focus:ring-primary border-gray-300'
                 }`}
-                placeholder="your@email.com"
-                autoComplete="email"
+                placeholder="Введите ваш логин"
+                autoComplete="username"
                 required
               />
               {errors.email && (
