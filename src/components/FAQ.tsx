@@ -42,8 +42,8 @@ const FAQ = () => {
   ];
 
   return (
-    <section className="py-16">
-      <div className="text-center mb-12">
+    <section className="py-8">
+      <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-foreground mb-4">Часто задаваемые вопросы</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Ответы на популярные вопросы о наших VDS серверах
