@@ -15,7 +15,7 @@ const Hero = () => {
       alt: "Процессоры AMD EPYC",
       title: "Высокая производительность",
       subtitle: "Мощные процессоры AMD EPYC с частотой 3.4GHz",
-      price: "Высокоскоростные диски NVMe • Быстрая память DDR4"
+      price: "Высокоскоростные диски NVMe\nБыстрая память DDR4"
     },
     {
       image: "/img/ffcc9d9d-f575-4415-a79d-3e08f7403e41.jpg",
@@ -89,7 +89,7 @@ const Hero = () => {
                   <p className="text-lg md:text-xl mb-2 text-white/90">
                     {slide.subtitle}
                   </p>
-                  <p className="text-lg md:text-xl text-white/90">
+                  <p className="text-lg md:text-xl text-white/90 whitespace-pre-line">
                     {slide.price}
                   </p>
                 </div>
