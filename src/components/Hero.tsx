@@ -14,8 +14,8 @@ const Hero = () => {
       image: "/img/2083d5b5-eb83-44dd-8630-82bc14a700a1.jpg",
       alt: "Процессоры AMD EPYC",
       title: "Высокая производительность",
-      subtitle: "Процессоры AMD EPYC",
-      price: "NVMe диски и быстрая сеть"
+      subtitle: "Мощные процессоры AMD EPYC с частотой 3.4GHz",
+      price: "Высокоскоростные диски NVMe"
     },
     {
       image: "/img/ffcc9d9d-f575-4415-a79d-3e08f7403e41.jpg",
