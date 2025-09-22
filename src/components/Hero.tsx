@@ -15,7 +15,7 @@ const Hero = () => {
       alt: "Процессоры AMD EPYC",
       title: "Высокая производительность",
       subtitle: "Мощные процессоры AMD EPYC с частотой 3.4GHz",
-      price: "Высокоскоростные диски NVMe"
+      price: "Высокоскоростные диски NVMe • Быстрая память DDR4"
     },
     {
       image: "/img/ffcc9d9d-f575-4415-a79d-3e08f7403e41.jpg",
