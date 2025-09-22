@@ -11,12 +11,6 @@ const Footer = () => {
               <Icon name="Server" size={24} className="text-primary" />
               <span className="text-xl font-bold">VDS SERVERS</span>
             </div>
-            <p className="text-slate-400">
-              Надежные VDS/VPS серверы
-            </p>
-            <p className="text-slate-400">
-              для вашего бизнеса
-            </p>
           </div>
           
           <div>
