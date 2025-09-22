@@ -11,11 +11,11 @@ const Hero = () => {
       price: "от 200 руб/мес"
     },
     {
-      image: "/img/bdd0d182-c814-4d07-9de4-348427f20d5b.jpg",
-      alt: "Современный дата-центр",
+      image: "/img/2083d5b5-eb83-44dd-8630-82bc14a700a1.jpg",
+      alt: "Процессоры AMD EPYC",
       title: "Высокая производительность",
-      subtitle: "Современное оборудование",
-      price: "SSD диски и быстрая сеть"
+      subtitle: "Процессоры AMD EPYC",
+      price: "NVMe диски и быстрая сеть"
     },
     {
       image: "/img/ffcc9d9d-f575-4415-a79d-3e08f7403e41.jpg",
