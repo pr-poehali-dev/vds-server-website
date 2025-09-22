@@ -53,6 +53,48 @@ const Features = () => {
             </p>
           </CardContent>
         </Card>
+
+        <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow animate-fade-in">
+          <CardHeader className="text-center">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="Clock" size={32} className="text-primary" />
+            </div>
+            <CardTitle>24/7 поддержка</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-center">
+              Круглосуточная техническая поддержка от сертифицированных специалистов
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow animate-fade-in">
+          <CardHeader className="text-center">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="Gauge" size={32} className="text-primary" />
+            </div>
+            <CardTitle>Мониторинг 99.9%</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-center">
+              Гарантированный аптайм 99.9% с постоянным мониторингом состояния серверов
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow animate-fade-in">
+          <CardHeader className="text-center">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="ArrowUpDown" size={32} className="text-primary" />
+            </div>
+            <CardTitle>Масштабирование</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-center">
+              Быстрое увеличение ресурсов сервера без простоев и перезагрузок
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );
